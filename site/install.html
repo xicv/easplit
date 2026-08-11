@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Install the notarized eaSplit beta on macOS.">
+    <meta name="theme-color" content="#03070d">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; object-src 'none'; base-uri 'self'">
+    <title>Install eaSplit</title>
+    <link rel="icon" href="assets/easplit-icon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="document-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="eaSplit home">
+          <img src="assets/easplit-icon.png" alt="" width="48" height="48">
+          <span>eaSplit</span>
+        </a>
+        <a class="button button-quiet" href="index.html">Back to overview</a>
+      </div>
+    </header>
+
+    <main id="main" class="document-shell">
+      <h1>Install eaSplit.</h1>
+      <p class="document-lead">A signed, Apple-notarized beta for macOS 15 or later.</p>
+
+      <section class="document-section">
+        <h2>Before you begin</h2>
+        <dl class="fact-list">
+          <dt>Version</dt><dd>0.1.0 beta 2 (build 2)</dd>
+          <dt>Compatibility</dt><dd>macOS 15 or later, Apple silicon and Intel</dd>
+          <dt>Permission</dt><dd>Accessibility, so eaSplit can move and resize the windows you choose</dd>
+        </dl>
+        <div class="document-actions">
+          <a class="button button-primary" href="downloads/eaSplit-0.1.0-beta.2.dmg" download>Download free beta</a>
+          <a class="button button-secondary" href="downloads/eaSplit-0.1.0-beta.2.dmg.sha256">View SHA-256</a>
+        </div>
+      </section>
+
+      <section class="document-section">
+        <h2>Install</h2>
+        <ol>
+          <li>Open the downloaded <code>eaSplit-0.1.0-beta.2.dmg</code>.</li>
+          <li>Drag <strong>eaSplit</strong> onto the <strong>Applications</strong> shortcut.</li>
+          <li>Eject the eaSplit disk image, then open eaSplit from your Applications folder.</li>
+          <li>Select <strong>Request Access</strong>. In System Settings, enable eaSplit under Privacy &amp; Security → Accessibility.</li>
+          <li>Return to eaSplit and select <strong>Check Again</strong> if approval is not detected immediately.</li>
+        </ol>
+        <p class="callout">
+          macOS should identify this download as notarized software from an identified developer.
+          If it reports a damaged app or an unidentified developer, stop and report the exact message
+          through the invitation channel instead of bypassing Gatekeeper.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>Your first split</h2>
+        <ol>
+          <li>Open two normal, resizable app windows.</li>
+          <li>Select the eaSplit icon in the menu bar.</li>
+          <li>Choose the two windows, the Columns layout, and the 50/50 ratio.</li>
+          <li>Enable <strong>Fill screen edge to edge</strong> in Settings if you prefer no outer or center gaps.</li>
+          <li>Select <strong>Split</strong>. Save the combination if you want to reuse it.</li>
+        </ol>
+      </section>
+
+      <section class="document-section">
+        <h2>Verify the download</h2>
+        <p>The adjacent checksum file contains the SHA-256 for these exact beta bytes.</p>
+        <p>In Terminal, run:</p>
+        <p><code>shasum -a 256 ~/Downloads/eaSplit-0.1.0-beta.2.dmg</code></p>
+        <p>Its value must match <a href="downloads/eaSplit-0.1.0-beta.2.dmg.sha256">the published checksum</a>.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <a class="brand" href="index.html"><span>eaSplit</span></a>
+        <nav aria-label="Footer"><a href="privacy.html">Privacy</a><a href="support.html">Support</a><a href="terms.html">Beta terms</a></nav>
+      </div>
+    </footer>
+  </body>
+</html>

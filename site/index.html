@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Choose the Mac windows you want together, split them cleanly, and save the combination for next time."
+    >
+    <meta name="theme-color" content="#03070d">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'"
+    >
+    <title>eaSplit — Put the right windows in the right places</title>
+    <link rel="icon" href="assets/easplit-icon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" aria-label="Primary navigation">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="eaSplit home">
+          <img src="assets/easplit-icon.png" alt="" width="48" height="48">
+          <span>eaSplit</span>
+        </a>
+        <nav class="primary-nav" aria-label="Main">
+          <a href="#how-it-works">How it works</a>
+          <a href="privacy.html">Privacy</a>
+          <a href="support.html">Support</a>
+        </nav>
+        <a class="button button-quiet header-download" href="downloads/eaSplit-0.1.0-beta.2.dmg" download>
+          Download beta
+        </a>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero container" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <h1 id="hero-title">Put the right windows in the right places.</h1>
+          <p>
+            Choose the apps you want together, split them cleanly, and save the
+            combination for next time.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="downloads/eaSplit-0.1.0-beta.2.dmg" download>
+              Download free beta
+            </a>
+            <a class="button button-secondary" href="#how-it-works">See how it works</a>
+          </div>
+        </div>
+
+        <div class="window-demo" aria-label="Illustration: two overlapping windows become a clean 50/50 split">
+          <div class="demo-state demo-before" aria-hidden="true">
+            <div class="demo-window window-browser">
+              <div class="window-bar"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></div>
+              <div class="browser-content">
+                <span>&#8203;</span><span>&#8203;</span><span>&#8203;</span>
+              </div>
+            </div>
+            <div class="demo-window window-chat">
+              <div class="window-bar"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></div>
+              <div class="chat-content"><span>&#8203;</span><span>&#8203;</span><span>&#8203;</span></div>
+            </div>
+          </div>
+          <div class="arrange-cue" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="28" height="28">
+              <path d="M12 4v15m0 0-5-5m5 5 5-5" />
+            </svg>
+          </div>
+          <div class="demo-state demo-after" aria-hidden="true">
+            <div class="demo-window window-half">
+              <div class="window-bar"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></div>
+              <div class="browser-content"><span>&#8203;</span><span>&#8203;</span><span>&#8203;</span></div>
+            </div>
+            <div class="demo-window window-half">
+              <div class="window-bar"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></div>
+              <div class="chat-content"><span>&#8203;</span><span>&#8203;</span><span>&#8203;</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="how-it-works" class="workflow-band" aria-labelledby="workflow-title">
+        <div class="container">
+          <h2 id="workflow-title">Three steps. Then one shortcut.</h2>
+          <ol class="workflow-rail">
+            <li>
+              <span class="workflow-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="16" rx="2"/></svg>
+              </span>
+              <strong>Choose</strong>
+              <span>Pick the apps and windows you want together.</span>
+            </li>
+            <li>
+              <span class="workflow-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16" rx="2"/><rect x="13" y="4" width="8" height="7" rx="2"/><rect x="13" y="13" width="8" height="7" rx="2"/></svg>
+              </span>
+              <strong>Arrange</strong>
+              <span>Split them cleanly into the perfect layout.</span>
+            </li>
+            <li>
+              <span class="workflow-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4-7 4V5a1 1 0 0 1 1-1Z"/></svg>
+              </span>
+              <strong>Save</strong>
+              <span>Save the combination for next time.</span>
+            </li>
+            <li class="shortcut-step">
+              <kbd aria-label="Command key">⌘</kbd>
+              <strong>Reuse</strong>
+              <span>Bring it back with your shortcut.</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="recipe-section container" aria-labelledby="recipe-title">
+        <div class="section-heading">
+          <h2 id="recipe-title">Your layout, remembered.</h2>
+        </div>
+        <div class="recipe-demo">
+          <fieldset class="recipe-choices">
+            <legend>Choose a recipe</legend>
+            <button class="recipe-option is-selected" type="button" aria-pressed="true" data-recipe="Browser + Teams">
+              <span class="recipe-glyph" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Browser + Teams</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
+            <button class="recipe-option" type="button" aria-pressed="false" data-recipe="Notes + Mail">
+              <span class="recipe-glyph" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Notes + Mail</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
+            <button class="recipe-option" type="button" aria-pressed="false" data-recipe="Code + Docs">
+              <span class="recipe-glyph" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Code + Docs</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg>
+            </button>
+          </fieldset>
+
+          <fieldset class="layout-choices">
+            <legend>Choose a layout</legend>
+            <button class="layout-option is-selected" type="button" aria-pressed="true" data-layout="Columns">
+              <span class="layout-glyph split-even" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Columns</span>
+            </button>
+            <button class="layout-option" type="button" aria-pressed="false" data-layout="Rows">
+              <span class="layout-glyph split-rows" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Rows</span>
+            </button>
+            <button class="layout-option" type="button" aria-pressed="false" data-layout="Three">
+              <span class="layout-glyph split-three" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Three</span>
+            </button>
+            <button class="layout-option" type="button" aria-pressed="false" data-layout="Focus">
+              <span class="layout-glyph split-focus" aria-hidden="true"><i>&#8203;</i><i>&#8203;</i><i>&#8203;</i></span>
+              <span>Focus</span>
+            </button>
+          </fieldset>
+          <p class="sr-only" aria-live="polite" id="demo-status">Browser + Teams selected with Columns layout.</p>
+        </div>
+      </section>
+
+      <section class="trust-section container" aria-label="Privacy and compatibility">
+        <div class="trust-item">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3 27 7v8c0 7.1-4.7 11.5-11 14-6.3-2.5-11-6.9-11-14V7l11-4Z"/><path d="m11 16 3.2 3.2L21 12"/></svg>
+          <p>No account. No analytics.<br>Nothing leaves your Mac.</p>
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="5" width="20" height="16" rx="2"/><path d="M3 25h26"/></svg>
+          <p>Signed and notarized for<br>macOS 15 or later. Apple silicon and Intel.</p>
+        </div>
+      </section>
+
+      <section class="final-cta container" aria-labelledby="final-title">
+        <img src="assets/easplit-icon.png" alt="" width="112" height="112">
+        <h2 id="final-title">Make room for what matters.</h2>
+        <a class="button button-primary" href="downloads/eaSplit-0.1.0-beta.2.dmg" download>
+          Download free beta
+        </a>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <a class="brand" href="index.html" aria-label="eaSplit home">
+          <img src="assets/easplit-icon.png" alt="" width="40" height="40">
+          <span>eaSplit</span>
+        </a>
+        <nav aria-label="Footer">
+          <a href="privacy.html">Privacy</a>
+          <a href="support.html">Support</a>
+          <a href="install.html">Install</a>
+          <a href="terms.html">Beta terms</a>
+        </nav>
+      </div>
+    </footer>
+  </body>
+</html>

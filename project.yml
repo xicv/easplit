@@ -1,0 +1,73 @@
+name: eaSplit
+options:
+  minimumXcodeGenVersion: 2.46.0
+  bundleIdPrefix: com.xicao
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+  indentWidth: 2
+  tabWidth: 2
+
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    exactVersion: 3.0.1
+
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    SWIFT_STRICT_CONCURRENCY: complete
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CLANG_ENABLE_MODULES: YES
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: 6UVB8NWW6F
+  configs:
+    Debug:
+      CODE_SIGN_IDENTITY: Apple Development
+
+targets:
+  eaSplit:
+    type: application
+    platform: macOS
+    sources:
+      - path: eaSplit
+    dependencies:
+      - package: KeyboardShortcuts
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xicao.easplit
+        PRODUCT_NAME: eaSplit
+        PRODUCT_DISPLAY_NAME: eaSplit
+        PRODUCT_MODULE_NAME: eaSplit
+        INFOPLIST_FILE: eaSplit/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_APP_SANDBOX: NO
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        MARKETING_VERSION: 0.1.0
+        CURRENT_PROJECT_VERSION: 2
+      configs:
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: com.xicao.easplit.debug
+          PRODUCT_DISPLAY_NAME: eaSplit Development
+        Release:
+          CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+          DEAD_CODE_STRIPPING: YES
+          ENABLE_CODE_COVERAGE: NO
+    scheme:
+      gatherCoverageData: false
+      testTargets:
+        - eaSplitTests
+
+  eaSplitTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: eaSplitTests
+    dependencies:
+      - target: eaSplit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xicao.easplit.tests
+        GENERATE_INFOPLIST_FILE: YES

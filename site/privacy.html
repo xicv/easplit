@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="How eaSplit handles window information and saved layouts.">
+    <meta name="theme-color" content="#03070d">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; object-src 'none'; base-uri 'self'">
+    <title>eaSplit Privacy</title>
+    <link rel="icon" href="assets/easplit-icon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="document-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="eaSplit home">
+          <img src="assets/easplit-icon.png" alt="" width="48" height="48">
+          <span>eaSplit</span>
+        </a>
+        <a class="button button-quiet" href="index.html">Back to overview</a>
+      </div>
+    </header>
+
+    <main id="main" class="document-shell">
+      <h1>Privacy, in plain language.</h1>
+      <p class="document-lead">No account. No analytics. Nothing leaves your Mac.</p>
+
+      <section class="document-section">
+        <h2>Scope</h2>
+        <p>
+          This statement describes the eaSplit macOS app. This website is hosted by GitHub
+          Pages and uses no analytics or third-party runtime resources. GitHub records visitor
+          IP addresses for security purposes as described in the
+          <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub Privacy Statement</a>.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>What eaSplit sees</h2>
+        <p>
+          With Accessibility permission, eaSplit can see the names, owning applications,
+          positions, and sizes of eligible on-screen windows. It uses window titles only to
+          distinguish choices in the picker. It does not read the content inside a window.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>What eaSplit stores</h2>
+        <p>
+          Saved recipes contain the recipe name, application names and bundle identifiers,
+          layout, ratio, and slot order. They are stored locally in
+          <code>~/Library/Application Support/eaSplit/recipes.json</code>. Preferences and the
+          last arrangement are stored in the standard local macOS preferences system.
+        </p>
+        <p>Window titles are not stored in recipes.</p>
+      </section>
+
+      <section class="document-section">
+        <h2>What eaSplit sends</h2>
+        <p>
+          Nothing. This beta has no account, analytics, advertising, cloud sync, or network
+          service. Its diagnostic logging records only counts and success or failure totals,
+          not window titles or document content.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>Your control</h2>
+        <ul>
+          <li>Remove individual saved recipes from eaSplit.</li>
+          <li>Revoke Accessibility permission at any time in System Settings.</li>
+          <li>Remove all saved recipes by deleting the local eaSplit Application Support folder after quitting the app.</li>
+        </ul>
+      </section>
+
+      <section class="document-section">
+        <h2>Questions</h2>
+        <p>
+          During the private beta, use the same invitation channel that provided your download.
+          Include the app version and macOS version, but do not send private window titles or documents.
+        </p>
+        <p>Last updated: 11 August 2026.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <a class="brand" href="index.html"><span>eaSplit</span></a>
+        <nav aria-label="Footer"><a href="support.html">Support</a><a href="install.html">Install</a><a href="terms.html">Beta terms</a></nav>
+      </div>
+    </footer>
+  </body>
+</html>

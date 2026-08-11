@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="eaSplit beta help, troubleshooting, and feedback guidance.">
+    <meta name="theme-color" content="#03070d">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self'; style-src 'self'; object-src 'none'; base-uri 'self'">
+    <title>eaSplit Support</title>
+    <link rel="icon" href="assets/easplit-icon.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="document-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="index.html" aria-label="eaSplit home">
+          <img src="assets/easplit-icon.png" alt="" width="48" height="48">
+          <span>eaSplit</span>
+        </a>
+        <a class="button button-quiet" href="index.html">Back to overview</a>
+      </div>
+    </header>
+
+    <main id="main" class="document-shell">
+      <h1>Help with the beta.</h1>
+      <p class="document-lead">Start with the exact symptom. Most setup issues are permission or window eligibility issues.</p>
+
+      <section class="document-section">
+        <h2>Accessibility says “waiting”</h2>
+        <ol>
+          <li>Open System Settings → Privacy &amp; Security → Accessibility.</li>
+          <li>Confirm the production <strong>eaSplit</strong> app is enabled, not only <strong>eaSplit Development</strong>.</li>
+          <li>Return to eaSplit and select <strong>Check Again</strong>.</li>
+          <li>If it still waits, quit eaSplit, reopen it from Applications, and check again.</li>
+        </ol>
+      </section>
+
+      <section class="document-section">
+        <h2>A window is missing</h2>
+        <p>
+          eaSplit lists normal, visible, movable, resizable windows. Full-screen windows,
+          minimized windows, dialogs, fixed-size panels, and nonstandard windows are excluded.
+          Bring a normal app window onto the current desktop and refresh the picker.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>A layout leaves space</h2>
+        <p>
+          Open eaSplit Settings. Turn on <strong>Fill screen edge to edge</strong> to remove both
+          the boundary gap and the gap between arranged windows. Keep it off if you prefer a
+          configurable visual gap.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>A saved recipe is unavailable</h2>
+        <p>
+          Recipes use applications that are already running. Open every application in the
+          recipe, make sure each has an eligible window, then refresh and try again.
+        </p>
+      </section>
+
+      <section class="document-section">
+        <h2>Report a beta issue</h2>
+        <p>Use the same invitation channel that gave you this beta and include:</p>
+        <ul>
+          <li>eaSplit version and build number</li>
+          <li>macOS version and Mac model</li>
+          <li>the layout and ratio you selected</li>
+          <li>which applications were involved</li>
+          <li>the exact message or visible result</li>
+        </ul>
+        <p>Do not include private document contents or sensitive window titles.</p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <a class="brand" href="index.html"><span>eaSplit</span></a>
+        <nav aria-label="Footer"><a href="privacy.html">Privacy</a><a href="install.html">Install</a><a href="terms.html">Beta terms</a></nav>
+      </div>
+    </footer>
+  </body>
+</html>
