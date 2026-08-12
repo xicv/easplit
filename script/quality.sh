@@ -38,6 +38,7 @@ xcodebuild \
   -derivedDataPath "$DERIVED_DATA" \
   -enableCodeCoverage YES \
   -resultBundlePath "$RESULT_BUNDLE" \
+  CODE_SIGNING_ALLOWED=NO \
   test
 
 /usr/bin/xcrun xccov view --report --json "$RESULT_BUNDLE" >"$BUILD_ROOT/coverage.json"
