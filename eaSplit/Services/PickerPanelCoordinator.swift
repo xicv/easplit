@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 @MainActor
-final class PickerPanelCoordinator {
+final class PickerPanelCoordinator: PickerPresenting {
   private final class KeyablePanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }

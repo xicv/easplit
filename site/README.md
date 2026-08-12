@@ -15,8 +15,8 @@ Then open `http://127.0.0.1:8765/`.
 
 Before inviting testers to the GitHub Pages deployment:
 
-1. Run `docs/BETA_ACCEPTANCE.md` against the exact DMG in `site/downloads/`.
-2. Verify the hosted download checksum is identical to the repository checksum.
+1. Run `docs/BETA_ACCEPTANCE.md` against the exact DMG in its qualified release directory.
+2. Publish that DMG, checksum, and manifest as one GitHub Release, then verify the hosted bytes.
 3. Confirm the privacy page still describes GitHub Pages hosting and its standard
    request-data handling accurately.
 4. Replace the private invitation-channel support wording with a real support

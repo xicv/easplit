@@ -11,16 +11,31 @@ RUN_APP_BUNDLE="/Users/xicao/Applications/eaSplit Development.app"
 APP_BINARY="$RUN_APP_BUNDLE/Contents/MacOS/$APP_NAME"
 LAUNCH_SERVICES_REGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
 
-pkill -x "$APP_NAME" >/dev/null 2>&1 || true
+case "$MODE" in
+  run|--debug|debug|--logs|logs|--telemetry|telemetry|--verify|verify) ;;
+  *)
+    echo "usage: $0 [run|--debug|--logs|--telemetry|--verify]" >&2
+    exit 2
+    ;;
+esac
+
+running_development_pids() {
+  /usr/bin/pgrep -f "$APP_BINARY" 2>/dev/null || true
+}
+
+while IFS= read -r pid; do
+  [[ "$pid" =~ ^[0-9]+$ ]] && /bin/kill "$pid"
+done < <(running_development_pids)
+
 for _ in {1..50}; do
-  if ! pgrep -x "$APP_NAME" >/dev/null; then
+  if [[ -z "$(running_development_pids)" ]]; then
     break
   fi
   sleep 0.1
 done
 
-if pgrep -x "$APP_NAME" >/dev/null; then
-  echo "Timed out waiting for $APP_NAME to stop" >&2
+if [[ -n "$(running_development_pids)" ]]; then
+  echo "Timed out waiting for eaSplit Development to stop" >&2
   exit 1
 fi
 
@@ -76,10 +91,6 @@ case "$MODE" in
   --verify|verify)
     open_app
     sleep 1
-    pgrep -x "$APP_NAME" >/dev/null
-    ;;
-  *)
-    echo "usage: $0 [run|--debug|--logs|--telemetry|--verify]" >&2
-    exit 2
+    [[ -n "$(running_development_pids)" ]]
     ;;
 esac

@@ -55,13 +55,16 @@ appear in Privacy & Security as **eaSplit Development**. This keeps local
 Accessibility approval stable across rebuilds and separate from the production
 Developer ID application.
 
-Run tests with:
+Run the canonical local quality gate with:
 
 ```sh
-xcodegen generate
-xcodebuild -project eaSplit.xcodeproj -scheme eaSplit \
-  -derivedDataPath .build/DerivedData test
+./script/quality.sh
 ```
+
+It checks only modified or created Swift files with SwiftLint, verifies the
+generated project is current, runs tests with coverage, enforces the production
+coverage floor, and runs Release static analysis. Hosted CI calls the same
+script.
 
 ## Distribution status
 
@@ -71,8 +74,11 @@ notarization, stapling, Gatekeeper, and checksum workflow. See
 not include placeholder licensing or automatic-update services; those require a
 real commercial provider, HTTPS download host, Sparkle appcast, and update key.
 
-Create a stored notarization profile, then run the release workflow with
-`EASPLIT_NOTARY_PROFILE=<profile> ./script/release.sh`.
+Create a stored notarization profile, then run the release workflow from a clean
+candidate commit with `EASPLIT_NOTARY_PROFILE=<profile>
+EASPLIT_RELEASE_LABEL=<version-label> ./script/release.sh`. The release directory
+contains the exact commit, tool versions, checksums, and Apple notarization IDs
+in `release-manifest.json`.
 
 The private-beta landing, install, privacy, support, terms, and download surface
 is in [`site/`](site/). The clean-Mac acceptance procedure is in

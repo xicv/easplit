@@ -22,7 +22,8 @@ Accessibility control that defines the product.
 ## Candidate qualification
 
 1. Update `MARKETING_VERSION` and `CURRENT_PROJECT_VERSION` in `project.yml`.
-2. Run all unit tests and static analysis from a clean generated project.
+2. Run `./script/quality.sh`; it is the same test, coverage, lint, generated
+   project, and static-analysis gate used by hosted CI.
 3. Exercise Accessibility permission, selection, every layout, ratios, gaps,
    recipes, repeat, undo, shortcuts, settings, and launch-at-login approval on
    a fresh standard macOS user account.
@@ -31,7 +32,9 @@ Accessibility control that defines the product.
 5. Set the stored notarization profile and build the artifact:
 
    ```sh
-   EASPLIT_NOTARY_PROFILE=eaSplit-notary ./script/release.sh
+   EASPLIT_NOTARY_PROFILE=eaSplit-notary \
+     EASPLIT_RELEASE_LABEL=0.1.0-beta.3 \
+     ./script/release.sh
    ```
 
 6. Verify the generated SHA-256 checksum on a second Mac that does not have the
@@ -40,8 +43,8 @@ Accessibility control that defines the product.
 7. Open the DMG, drag eaSplit to Applications, and verify the installed app is
    the same version and build as the qualified export.
 8. Scan the DMG with the chosen malware service, upload the exact qualified
-   bytes, and retain both app and DMG notarization records and checksums with the
-   release record.
+   bytes, and retain `release-manifest.json`, both app and DMG notarization
+   records, and checksums with the release record.
 
 `release.sh` fails closed unless the app is universal, Developer ID signed,
 Hardened Runtime enabled, free of development and sandbox entitlements,

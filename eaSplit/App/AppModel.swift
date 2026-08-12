@@ -13,11 +13,11 @@ final class AppModel {
     static let lastArrangement = "lastArrangement"
   }
 
-  private let accessibilityClient: AccessibilityWindowClient
+  private let accessibilityClient: any WindowControlling
   private let permissionMonitor: AccessibilityPermissionMonitor
   private let recentApplicationTracker: RecentApplicationTracker
-  private let pickerPanelCoordinator: PickerPanelCoordinator
-  private var hotKeyService: HotKeyService?
+  private let pickerPanelCoordinator: any PickerPresenting
+  private let defaults: UserDefaults
   private var lastArrangement: SplitRecipe?
   private var refreshTask: Task<Void, Never>?
   private var preparationTask: Task<Void, Never>?
@@ -38,14 +38,14 @@ final class AppModel {
 
   var selectedLayout: SplitLayout {
     didSet {
-      UserDefaults.standard.set(selectedLayout.rawValue, forKey: DefaultsKey.selectedLayout)
+      defaults.set(selectedLayout.rawValue, forKey: DefaultsKey.selectedLayout)
       reconcileSelection()
     }
   }
 
   var selectedRatio: SplitRatio {
     didSet {
-      UserDefaults.standard.set(selectedRatio.rawValue, forKey: DefaultsKey.selectedRatio)
+      defaults.set(selectedRatio.rawValue, forKey: DefaultsKey.selectedRatio)
     }
   }
 
@@ -56,13 +56,13 @@ final class AppModel {
         gap = clamped
         return
       }
-      UserDefaults.standard.set(gap, forKey: DefaultsKey.gap)
+      defaults.set(gap, forKey: DefaultsKey.gap)
     }
   }
 
   var edgeToEdgeWindows: Bool {
     didSet {
-      UserDefaults.standard.set(edgeToEdgeWindows, forKey: DefaultsKey.edgeToEdgeWindows)
+      defaults.set(edgeToEdgeWindows, forKey: DefaultsKey.edgeToEdgeWindows)
     }
   }
 
@@ -84,12 +84,13 @@ final class AppModel {
   }
 
   init(
-    accessibilityClient: AccessibilityWindowClient = AccessibilityWindowClient(),
+    accessibilityClient: any WindowControlling = AccessibilityWindowClient(),
     permissionMonitor: AccessibilityPermissionMonitor = AccessibilityPermissionMonitor(),
     recentApplicationTracker: RecentApplicationTracker = RecentApplicationTracker(),
     recipeStore: RecipeStore = RecipeStore(),
     launchAtLogin: LaunchAtLoginController = LaunchAtLoginController(),
-    pickerPanelCoordinator: PickerPanelCoordinator = PickerPanelCoordinator()
+    pickerPanelCoordinator: any PickerPresenting = PickerPanelCoordinator(),
+    defaults: UserDefaults = .standard
   ) {
     self.accessibilityClient = accessibilityClient
     self.permissionMonitor = permissionMonitor
@@ -97,34 +98,28 @@ final class AppModel {
     self.recipeStore = recipeStore
     self.launchAtLogin = launchAtLogin
     self.pickerPanelCoordinator = pickerPanelCoordinator
+    self.defaults = defaults
 
-    let storedLayout = UserDefaults.standard.string(forKey: DefaultsKey.selectedLayout)
+    let storedLayout = defaults.string(forKey: DefaultsKey.selectedLayout)
     selectedLayout = SplitLayout(rawValue: storedLayout ?? "") ?? .twoColumns
 
-    let storedRatio = UserDefaults.standard.string(forKey: DefaultsKey.selectedRatio)
+    let storedRatio = defaults.string(forKey: DefaultsKey.selectedRatio)
     selectedRatio = SplitRatio(rawValue: storedRatio ?? "") ?? .equal
 
-    if UserDefaults.standard.object(forKey: DefaultsKey.gap) == nil {
+    if defaults.object(forKey: DefaultsKey.gap) == nil {
       gap = 8
     } else {
-      gap = UserDefaults.standard.double(forKey: DefaultsKey.gap)
+      gap = defaults.double(forKey: DefaultsKey.gap)
     }
 
-    edgeToEdgeWindows = UserDefaults.standard.bool(forKey: DefaultsKey.edgeToEdgeWindows)
+    edgeToEdgeWindows = defaults.bool(forKey: DefaultsKey.edgeToEdgeWindows)
 
-    if let data = UserDefaults.standard.data(forKey: DefaultsKey.lastArrangement),
+    if let data = defaults.data(forKey: DefaultsKey.lastArrangement),
       let decoded = try? JSONDecoder().decode(SplitRecipe.self, from: data)
     {
       lastArrangement = decoded
     }
 
-    hotKeyService = HotKeyService(
-      onOpenPicker: { [weak self] in self?.showPicker() },
-      onQuickSplit: { [weak self] in self?.quickSplit() },
-      onRepeatLastSplit: { [weak self] in self?.repeatLastSplit() }
-    )
-
-    refreshWindows()
   }
 
   func refreshWindows() {
@@ -257,7 +252,7 @@ final class AppModel {
       self.canUndo = self.accessibilityClient.hasUndo
       self.handle(result)
 
-      if result.arrangedCount > 0 {
+      if result.succeeded {
         if let rememberedRecipe {
           self.rememberLastArrangement(rememberedRecipe)
         }
@@ -394,7 +389,7 @@ final class AppModel {
   private func rememberLastArrangement(_ recipe: SplitRecipe) {
     lastArrangement = recipe
     if let data = try? JSONEncoder().encode(recipe) {
-      UserDefaults.standard.set(data, forKey: DefaultsKey.lastArrangement)
+      defaults.set(data, forKey: DefaultsKey.lastArrangement)
     }
   }
 

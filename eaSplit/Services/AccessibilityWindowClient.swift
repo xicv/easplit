@@ -2,7 +2,7 @@ import AppKit
 import ApplicationServices
 
 @MainActor
-final class AccessibilityWindowClient {
+final class AccessibilityWindowClient: WindowControlling {
   private final class AXElement: @unchecked Sendable {
     let value: AXUIElement
 

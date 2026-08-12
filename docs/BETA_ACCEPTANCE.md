@@ -5,9 +5,9 @@ that has never had an eaSplit development build or signing certificate.
 
 ## Release bytes
 
-- Candidate: `eaSplit-0.1.0-beta.2.dmg`
+- Candidate: `eaSplit-0.1.0-beta.3.dmg`
 - Product version: `0.1.0`
-- Build: `2`
+- Build: `3`
 - Minimum system: macOS 15
 - Architectures: Apple silicon and Intel
 
@@ -18,7 +18,7 @@ after recording its checksum.
 ## Clean-Mac install
 
 1. Download the DMG through the actual hosted beta page.
-2. Compare `shasum -a 256 eaSplit-0.1.0-beta.2.dmg` with the published checksum.
+2. Compare `shasum -a 256 eaSplit-0.1.0-beta.3.dmg` with the published checksum.
 3. Open the DMG in Finder without bypassing any Gatekeeper warning.
 4. Confirm the image contains `eaSplit.app` and an `Applications` shortcut.
 5. Drag eaSplit to Applications, eject the image, and launch the installed copy.

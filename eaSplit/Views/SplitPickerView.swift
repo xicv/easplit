@@ -141,7 +141,7 @@ struct SplitPickerView: View {
       if model.windows.isEmpty {
         ContentUnavailableView(
           "No Resizable Windows",
-          systemImage: "macwindow.badge.xmark",
+          systemImage: "macwindow",
           description: Text("Open an application window, then refresh.")
         )
         .frame(maxWidth: .infinity, minHeight: 150)

@@ -14,7 +14,10 @@ struct SettingsView: View {
     }
     .frame(width: 520, height: 350)
     .scenePadding()
-    .onAppear { model.refreshWindows() }
+    .onAppear {
+      model.dismissPicker()
+      model.refreshWindows()
+    }
   }
 
   private var generalSettings: some View {

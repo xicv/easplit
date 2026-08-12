@@ -1,0 +1,32 @@
+name: eaSplit quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: macos-26
+    env:
+      EASPLIT_LINT_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install build tools
+        run: brew install swiftlint xcodegen
+
+      - name: Run canonical quality gate
+        run: ./script/quality.sh
