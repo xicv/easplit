@@ -69,6 +69,47 @@ struct AppModelTests {
   }
 
   @Test
+  func refreshRequestsNeverOverlapAndRunTheLatestRequest() async throws {
+    let fixture = try makeFixture(blockFirstDiscovery: true)
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitUntil { fixture.windowController.discoverCallCount == 1 }
+
+    fixture.model.refreshWindows()
+    for _ in 0..<10 { await Task.yield() }
+
+    #expect(fixture.windowController.discoverCallCount == 1)
+    #expect(fixture.windowController.maximumConcurrentDiscoveries == 1)
+
+    fixture.windowController.releaseFirstDiscovery()
+    await waitWhile { fixture.model.isRefreshing }
+
+    #expect(fixture.windowController.discoverCallCount == 2)
+    #expect(fixture.windowController.maximumConcurrentDiscoveries == 1)
+  }
+
+  @Test
+  func quickSplitWaitsForTheCoalescedRefresh() async throws {
+    let fixture = try makeFixture(
+      arrangementResult: ArrangementResult(arrangedCount: 2, failures: []),
+      blockFirstDiscovery: true
+    )
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitUntil { fixture.windowController.discoverCallCount == 1 }
+    fixture.model.quickSplit()
+
+    fixture.windowController.releaseFirstDiscovery()
+    await waitUntil { fixture.windowController.arrangeCallCount == 1 }
+
+    #expect(fixture.windowController.discoverCallCount == 2)
+    #expect(fixture.windowController.maximumConcurrentDiscoveries == 1)
+    #expect(fixture.windowController.arrangedWindowIDs == fixture.windowController.windows.map(\.id))
+  }
+
+  @Test
   func quickSplitWithTooFewWindowsExplainsAndOpensPicker() async throws {
     let fixture = try makeFixture(windows: [Self.makeWindows()[0]])
     defer { fixture.cleanUp() }
@@ -160,7 +201,8 @@ struct AppModelTests {
 
   private func makeFixture(
     windows: [WindowDescriptor] = Self.makeWindows(),
-    arrangementResult: ArrangementResult = ArrangementResult(arrangedCount: 0, failures: [])
+    arrangementResult: ArrangementResult = ArrangementResult(arrangedCount: 0, failures: []),
+    blockFirstDiscovery: Bool = false
   ) throws -> ModelFixture {
     let suiteName = "AppModelTests.\(UUID().uuidString)"
     let defaults = try #require(UserDefaults(suiteName: suiteName))
@@ -169,7 +211,8 @@ struct AppModelTests {
     let recipeStore = RecipeStore(fileURL: recipeURL)
     let windowController = WindowControllerStub(
       windows: windows,
-      arrangementResult: arrangementResult
+      arrangementResult: arrangementResult,
+      blockFirstDiscovery: blockFirstDiscovery
     )
     let picker = PickerPresenterSpy()
     let model = AppModel(
@@ -266,15 +309,24 @@ private final class WindowControllerStub: WindowControlling {
   var hasUndo = true
   let windows: [WindowDescriptor]
   private(set) var discoverCallCount = 0
+  private(set) var maximumConcurrentDiscoveries = 0
   private(set) var arrangeCallCount = 0
   private(set) var arrangedWindowIDs: [UUID] = []
   private(set) var arrangedGap: CGFloat?
 
   private let arrangementResult: ArrangementResult
+  private let blockFirstDiscovery: Bool
+  private var concurrentDiscoveries = 0
+  private var firstDiscoveryContinuation: CheckedContinuation<Void, Never>?
 
-  init(windows: [WindowDescriptor], arrangementResult: ArrangementResult) {
+  init(
+    windows: [WindowDescriptor],
+    arrangementResult: ArrangementResult,
+    blockFirstDiscovery: Bool
+  ) {
     self.windows = windows
     self.arrangementResult = arrangementResult
+    self.blockFirstDiscovery = blockFirstDiscovery
   }
 
   func requestPermission() -> Bool { hasPermission }
@@ -282,7 +334,20 @@ private final class WindowControllerStub: WindowControlling {
 
   func discoverWindows(recentProcessIdentifiers: [pid_t]) async -> [WindowDescriptor] {
     discoverCallCount += 1
+    concurrentDiscoveries += 1
+    maximumConcurrentDiscoveries = max(maximumConcurrentDiscoveries, concurrentDiscoveries)
+    if blockFirstDiscovery, discoverCallCount == 1 {
+      await withCheckedContinuation { continuation in
+        firstDiscoveryContinuation = continuation
+      }
+    }
+    concurrentDiscoveries -= 1
     return windows
+  }
+
+  func releaseFirstDiscovery() {
+    firstDiscoveryContinuation?.resume()
+    firstDiscoveryContinuation = nil
   }
 
   func arrange(

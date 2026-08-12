@@ -5,9 +5,9 @@ that has never had an eaSplit development build or signing certificate.
 
 ## Release bytes
 
-- Candidate: `eaSplit-0.1.0-beta.3.dmg`
+- Candidate: `eaSplit-0.1.0-beta.4.dmg`
 - Product version: `0.1.0`
-- Build: `3`
+- Build: `4`
 - Minimum system: macOS 15
 - Architectures: Apple silicon and Intel
 
@@ -18,7 +18,7 @@ after recording its checksum.
 ## Clean-Mac install
 
 1. Download the DMG through the actual hosted beta page.
-2. Compare `shasum -a 256 eaSplit-0.1.0-beta.3.dmg` with the published checksum.
+2. Compare `shasum -a 256 eaSplit-0.1.0-beta.4.dmg` with the published checksum.
 3. Open the DMG in Finder without bypassing any Gatekeeper warning.
 4. Confirm the image contains `eaSplit.app` and an `Applications` shortcut.
 5. Drag eaSplit to Applications, eject the image, and launch the installed copy.
@@ -31,6 +31,11 @@ exact result of each step. Repeat on at least one Apple silicon Mac and one Inte
 Mac before calling the beta generally available.
 
 ## Permission and core workflow
+
+For a repeatable local window set, run `./script/run_acceptance_fixture.sh`.
+The picker should include **Browser Fixture** and **Chat Fixture** as separate
+windows. It should exclude **Fixed Panel — should not appear**. The fixture is a
+separate development target and is never embedded in the release app or DMG.
 
 1. Select **Request Access** and enable the production **eaSplit** entry in
    System Settings → Privacy & Security → Accessibility.

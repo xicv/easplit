@@ -11,6 +11,44 @@ final class AccessibilityWindowClient: WindowControlling {
     }
   }
 
+  private struct AXWindowFrameAccessor: WindowFrameAccessing {
+    func frame(of handle: AXElement) -> CGRect? {
+      AccessibilityWindowClient.frame(of: handle.value)
+    }
+
+    func setPosition(_ position: CGPoint, for handle: AXElement) -> String? {
+      AXUIElementSetMessagingTimeout(handle.value, 0.5)
+      var position = position
+      guard let value = AXValueCreate(.cgPoint, &position) else {
+        return "the requested frame could not be encoded"
+      }
+      let result = AXUIElementSetAttributeValue(
+        handle.value,
+        kAXPositionAttribute as CFString,
+        value
+      )
+      return result == .success ? nil : AccessibilityWindowClient.description(for: result)
+    }
+
+    func setSize(_ size: CGSize, for handle: AXElement) -> String? {
+      AXUIElementSetMessagingTimeout(handle.value, 0.5)
+      var size = size
+      guard let value = AXValueCreate(.cgSize, &size) else {
+        return "the requested frame could not be encoded"
+      }
+      let result = AXUIElementSetAttributeValue(
+        handle.value,
+        kAXSizeAttribute as CFString,
+        value
+      )
+      return result == .success ? nil : AccessibilityWindowClient.description(for: result)
+    }
+
+    func waitForWindowToSettle() {
+      Thread.sleep(forTimeInterval: 0.015)
+    }
+  }
+
   private struct ApplicationCandidate: Sendable {
     let processIdentifier: pid_t
     let applicationName: String
@@ -41,19 +79,6 @@ final class AccessibilityWindowClient: WindowControlling {
   private struct WindowRecord {
     let descriptor: WindowDescriptor
     let element: AXElement
-  }
-
-  private struct FrameTarget: Sendable {
-    let applicationName: String
-    let element: AXElement
-    let destination: CGRect
-  }
-
-  private struct FrameOutcome: Sendable {
-    let applicationName: String
-    let element: AXElement
-    let originalFrame: CGRect?
-    let failure: String?
   }
 
   private struct UndoRecord: Sendable {
@@ -210,9 +235,9 @@ final class AccessibilityWindowClient: WindowControlling {
     }
 
     let targets = zip(selectedRecords, destinationFrames).map { record, destination in
-      FrameTarget(
+      WindowFrameTarget(
         applicationName: record.descriptor.applicationName,
-        element: record.element,
+        handle: record.element,
         destination: destination
       )
     }
@@ -222,7 +247,7 @@ final class AccessibilityWindowClient: WindowControlling {
       guard let frame = outcome.originalFrame else { return nil }
       return UndoRecord(
         applicationName: outcome.applicationName,
-        element: outcome.element,
+        element: outcome.handle,
         frame: frame
       )
     }
@@ -256,7 +281,7 @@ final class AccessibilityWindowClient: WindowControlling {
     )
   }
 
-  nonisolated private static func discoverWindows(
+  @concurrent nonisolated private static func discoverWindows(
     in applications: [ApplicationCandidate],
     screens: [ScreenSnapshot]
   ) async -> [DiscoveredWindow] {
@@ -397,90 +422,36 @@ final class AccessibilityWindowClient: WindowControlling {
     return CGRect(origin: position, size: size)
   }
 
-  nonisolated private static func applyFrame(_ target: FrameTarget) -> FrameOutcome {
-    let originalFrame = frame(of: target.element.value)
-    let failure = setFrame(target.destination, for: target.element)
-    return FrameOutcome(
-      applicationName: target.applicationName,
-      element: target.element,
-      originalFrame: originalFrame,
-      failure: failure
-    )
-  }
-
-  nonisolated private static func applyFrames(
-    _ targets: [FrameTarget]
-  ) async -> [FrameOutcome] {
-    targets.map { target in
+  @concurrent nonisolated private static func applyFrames(
+    _ targets: [WindowFrameTarget<AXElement>]
+  ) async -> [WindowFrameOutcome<AXElement>] {
+    let transaction = WindowFrameTransaction(accessor: AXWindowFrameAccessor())
+    return targets.map { target in
       guard !Task.isCancelled else {
-        return FrameOutcome(
+        return WindowFrameOutcome(
           applicationName: target.applicationName,
-          element: target.element,
+          handle: target.handle,
           originalFrame: nil,
           failure: "the arrangement was cancelled"
         )
       }
-      return applyFrame(target)
+      return transaction.apply([target])[0]
     }
   }
 
-  nonisolated private static func restoreFrames(
+  @concurrent nonisolated private static func restoreFrames(
     _ records: [UndoRecord]
   ) async -> [(UndoRecord, String?)] {
-    records.map { record in
+    let transaction = WindowFrameTransaction(accessor: AXWindowFrameAccessor())
+    return records.map { record in
       guard !Task.isCancelled else { return (record, "the undo was cancelled") }
-      return (record, setFrame(record.frame, for: record.element))
+      let target = WindowFrameTarget(
+        applicationName: record.applicationName,
+        handle: record.element,
+        destination: record.frame
+      )
+      return (record, transaction.restore([target])[0].1)
     }
-  }
-
-  nonisolated private static func setFrame(
-    _ frame: CGRect,
-    for element: AXElement
-  ) -> String? {
-    AXUIElementSetMessagingTimeout(element.value, 0.5)
-    var position = frame.origin
-    var size = frame.size
-    guard
-      let positionValue = AXValueCreate(.cgPoint, &position),
-      let sizeValue = AXValueCreate(.cgSize, &size)
-    else { return "the requested frame could not be encoded" }
-
-    var lastError: AXError?
-    for attempt in 0..<2 {
-      let updates: [(CFString, CFTypeRef)] =
-        attempt == 0
-        ? [
-          (kAXPositionAttribute as CFString, positionValue),
-          (kAXSizeAttribute as CFString, sizeValue),
-          (kAXPositionAttribute as CFString, positionValue),
-        ]
-        : [
-          (kAXSizeAttribute as CFString, sizeValue),
-          (kAXPositionAttribute as CFString, positionValue),
-          (kAXSizeAttribute as CFString, sizeValue),
-          (kAXPositionAttribute as CFString, positionValue),
-        ]
-
-      for (attribute, value) in updates {
-        let result = AXUIElementSetAttributeValue(element.value, attribute, value)
-        if result != .success {
-          lastError = result
-          break
-        }
-      }
-
-      Thread.sleep(forTimeInterval: 0.015)
-      if let actualFrame = self.frame(of: element.value), framesMatch(actualFrame, frame) {
-        return nil
-      }
-    }
-
-    guard let actualFrame = self.frame(of: element.value) else {
-      if let lastError { return description(for: lastError) }
-      return "the application did not report its final window size"
-    }
-    return
-      "the application kept \(Int(actualFrame.width))×\(Int(actualFrame.height)) instead of \(Int(frame.width))×\(Int(frame.height))"
   }
 
   nonisolated private static func framesMatch(

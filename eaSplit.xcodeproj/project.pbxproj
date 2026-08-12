@@ -20,7 +20,9 @@
 		58C45B55EA0FE4B6A68BA25A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18F0DAA9A6C43272B2BEF77 /* AppModel.swift */; };
 		64D0DBD21866F910CAEE5083 /* PickerPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E57097E3E7D73D5103BA4FC /* PickerPresenting.swift */; };
 		6C9C34F5272F68E518647583 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 1C8745816071A48109C03BED /* KeyboardShortcuts */; };
+		7801B9FA22131E44E52E6818 /* WindowFrameTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E62AB4C5A173F8086B39FE /* WindowFrameTransaction.swift */; };
 		8B073088D7B009B1A7681A03 /* LaunchAtLoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FD3636C3BBD5552721F0F /* LaunchAtLoginController.swift */; };
+		8D15C3A738A2FEA4A373B745 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E124B4EE22D5BF948C916BA /* main.swift */; };
 		8FDD79D22AF6999E48BFB842 /* PermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BBC4D1CAB45E9E01840E35 /* PermissionView.swift */; };
 		9AAFEAA6851772F160498EAF /* SplitRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8657081A985684462E426266 /* SplitRecipe.swift */; };
 		A4BEFF1BD47C3866FB4B5ACF /* RecentApplicationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47039AF71C8A85FB327C7FDB /* RecentApplicationTracker.swift */; };
@@ -28,6 +30,7 @@
 		A82F9D81784145BC3B908FE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4872C5DEA03FEBA6F2E53FE1 /* Assets.xcassets */; };
 		A9E7EABB3DEA0FB309DBFBD6 /* ArrangementResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98970B79170FE9BA5D126B89 /* ArrangementResult.swift */; };
 		AEED7A183BC5B3AFFC48B191 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8B025B784FE91F1CFF661F /* SettingsView.swift */; };
+		AFFA04589C92FC2FB0F835CD /* WindowFrameTransactionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D4EC5C28D3020D6300D177 /* WindowFrameTransactionTests.swift */; };
 		C1154568AAE3F28077695E54 /* WindowControlling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C5BB6EDA1F8445978443B4 /* WindowControlling.swift */; };
 		C7F85812D2B6725C85FA8E57 /* RecipeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6882E8C1F44100D338CF63CC /* RecipeStore.swift */; };
 		D09E76CBC35E45F78BC45846 /* LayoutOptionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC747B64CE8210CC35B4E567 /* LayoutOptionButton.swift */; };
@@ -57,6 +60,7 @@
 /* Begin PBXFileReference section */
 		10687A2EAD7586B82FAF173A /* SaveRecipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRecipeView.swift; sourceTree = "<group>"; };
 		144657F60FF42F63C941E534 /* SplitLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitLayout.swift; sourceTree = "<group>"; };
+		14D4EC5C28D3020D6300D177 /* WindowFrameTransactionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameTransactionTests.swift; sourceTree = "<group>"; };
 		1D966D22C5BFADF8733E7844 /* WindowDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDescriptor.swift; sourceTree = "<group>"; };
 		24E94E483ACC9E7B6C1B426F /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		25664A8CB2D24F9F71B88A1A /* eaSplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = eaSplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -68,6 +72,7 @@
 		4872C5DEA03FEBA6F2E53FE1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B8B025B784FE91F1CFF661F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		50C5BB6EDA1F8445978443B4 /* WindowControlling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowControlling.swift; sourceTree = "<group>"; };
+		5E124B4EE22D5BF948C916BA /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6378A3B08E557ABFF978C9AE /* LayoutPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutPicker.swift; sourceTree = "<group>"; };
 		6882E8C1F44100D338CF63CC /* RecipeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStore.swift; sourceTree = "<group>"; };
 		7052E790667A060B77411B7F /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
@@ -75,6 +80,7 @@
 		799162504F286ED0E396F235 /* AppPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPresentationController.swift; sourceTree = "<group>"; };
 		82BBC4D1CAB45E9E01840E35 /* PermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionView.swift; sourceTree = "<group>"; };
 		8657081A985684462E426266 /* SplitRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitRecipe.swift; sourceTree = "<group>"; };
+		923084179A9A1B844657BDA1 /* eaSplitAcceptanceFixture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eaSplitAcceptanceFixture.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9746FA7AEF708BD4B2C204D0 /* AccessibilityPermissionMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionMonitor.swift; sourceTree = "<group>"; };
 		98970B79170FE9BA5D126B89 /* ArrangementResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrangementResult.swift; sourceTree = "<group>"; };
 		9F9FD3636C3BBD5552721F0F /* LaunchAtLoginController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginController.swift; sourceTree = "<group>"; };
@@ -82,6 +88,7 @@
 		A77945E2983A2BD5EF0117F0 /* RecipeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStoreTests.swift; sourceTree = "<group>"; };
 		AFE3EB830D830F31A275F27A /* PickerPanelCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerPanelCoordinator.swift; sourceTree = "<group>"; };
 		C1B43510EC6D0ADBB3672E36 /* eaSplit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eaSplit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3E62AB4C5A173F8086B39FE /* WindowFrameTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameTransaction.swift; sourceTree = "<group>"; };
 		CB5F223AB74FA4C4F796F016 /* eaSplitApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = eaSplitApp.swift; sourceTree = "<group>"; };
 		CBFF2CE327B0198F855D1D91 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CCD6CEB1601F4B1885BFA61F /* SplitPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitPickerView.swift; sourceTree = "<group>"; };
@@ -118,6 +125,7 @@
 				3E57097E3E7D73D5103BA4FC /* PickerPresenting.swift */,
 				47039AF71C8A85FB327C7FDB /* RecentApplicationTracker.swift */,
 				50C5BB6EDA1F8445978443B4 /* WindowControlling.swift */,
+				C3E62AB4C5A173F8086B39FE /* WindowFrameTransaction.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -154,6 +162,14 @@
 			path = Support;
 			sourceTree = "<group>";
 		};
+		816403C1B63D180FDA20C225 /* eaSplitAcceptanceFixture */ = {
+			isa = PBXGroup;
+			children = (
+				5E124B4EE22D5BF948C916BA /* main.swift */,
+			);
+			path = eaSplitAcceptanceFixture;
+			sourceTree = "<group>";
+		};
 		A04B5E26ACC01E1B34716F4C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,6 +188,7 @@
 				279AC1AECBA5E00FDDED4EF1 /* AppPresentationControllerTests.swift */,
 				D6CBFABDD63C3AF3E27951B9 /* LayoutEngineTests.swift */,
 				A77945E2983A2BD5EF0117F0 /* RecipeStoreTests.swift */,
+				14D4EC5C28D3020D6300D177 /* WindowFrameTransactionTests.swift */,
 			);
 			path = eaSplitTests;
 			sourceTree = "<group>";
@@ -180,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				C1B43510EC6D0ADBB3672E36 /* eaSplit.app */,
+				923084179A9A1B844657BDA1 /* eaSplitAcceptanceFixture.app */,
 				25664A8CB2D24F9F71B88A1A /* eaSplitTests.xctest */,
 			);
 			name = Products;
@@ -189,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				F26523271FA5022D00F2CABF /* eaSplit */,
+				816403C1B63D180FDA20C225 /* eaSplitAcceptanceFixture */,
 				A4D7B565747FA88E51228D1A /* eaSplitTests */,
 				B3CD89E07E2026D67D08D673 /* Products */,
 			);
@@ -262,6 +281,23 @@
 			productReference = C1B43510EC6D0ADBB3672E36 /* eaSplit.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A2BCF0AD0E8D05A0F30739F1 /* eaSplitAcceptanceFixture */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2CF540BC7C4B05709D0CB4A7 /* Build configuration list for PBXNativeTarget "eaSplitAcceptanceFixture" */;
+			buildPhases = (
+				46D576887B01C43577E533F6 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = eaSplitAcceptanceFixture;
+			packageProductDependencies = (
+			);
+			productName = eaSplitAcceptanceFixture;
+			productReference = 923084179A9A1B844657BDA1 /* eaSplitAcceptanceFixture.app */;
+			productType = "com.apple.product-type.application";
+		};
 		FE6D2B578024DF923BCFD282 /* eaSplitTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8415935B6B0274B928901787 /* Build configuration list for PBXNativeTarget "eaSplitTests" */;
@@ -293,6 +329,10 @@
 						DevelopmentTeam = 6UVB8NWW6F;
 						ProvisioningStyle = Automatic;
 					};
+					A2BCF0AD0E8D05A0F30739F1 = {
+						DevelopmentTeam = 6UVB8NWW6F;
+						ProvisioningStyle = Automatic;
+					};
 					FE6D2B578024DF923BCFD282 = {
 						DevelopmentTeam = 6UVB8NWW6F;
 						ProvisioningStyle = Automatic;
@@ -316,6 +356,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				A2BCF0AD0E8D05A0F30739F1 /* eaSplitAcceptanceFixture */,
 				3DA8C7DECB38175C48394DFD /* eaSplit */,
 				FE6D2B578024DF923BCFD282 /* eaSplitTests */,
 			);
@@ -335,6 +376,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		46D576887B01C43577E533F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D15C3A738A2FEA4A373B745 /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		65E4DD163C12EE8958604E51 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -344,6 +393,7 @@
 				27B5620D4E9083DC56011261 /* AppPresentationControllerTests.swift in Sources */,
 				2F24CCD1063D3CFE9E7128FE /* LayoutEngineTests.swift in Sources */,
 				500B156785D6BE3059C49619 /* RecipeStoreTests.swift in Sources */,
+				AFFA04589C92FC2FB0F835CD /* WindowFrameTransactionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,6 +426,7 @@
 				9AAFEAA6851772F160498EAF /* SplitRecipe.swift in Sources */,
 				C1154568AAE3F28077695E54 /* WindowControlling.swift in Sources */,
 				4F821DA5FDA3FC1BF4D40307 /* WindowDescriptor.swift in Sources */,
+				7801B9FA22131E44E52E6818 /* WindowFrameTransaction.swift in Sources */,
 				D664A70E4B7858EF2C6B7B47 /* WindowRow.swift in Sources */,
 				E4B41B65CCD4F7028DE709A6 /* eaSplitApp.swift in Sources */,
 			);
@@ -465,7 +516,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -483,13 +534,31 @@
 			};
 			name = Debug;
 		};
+		61910BD4E2FBEA37DF135813 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.xicao.easplit.acceptance-fixture";
+				PRODUCT_NAME = "eaSplit Acceptance Fixture";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
 		812762DBFABF18CC68EA61FB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEAD_CODE_STRIPPING = YES;
 				ENABLE_APP_SANDBOX = NO;
 				ENABLE_CODE_COVERAGE = NO;
@@ -603,6 +672,24 @@
 			};
 			name = Release;
 		};
+		D90761CEABC17D8E28CC16EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.xicao.easplit.acceptance-fixture";
+				PRODUCT_NAME = "eaSplit Acceptance Fixture";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -611,6 +698,15 @@
 			buildConfigurations = (
 				01D4AB7C0FAB7AB9E6637BCB /* Debug */,
 				CC254AFD2FF202427E8366ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2CF540BC7C4B05709D0CB4A7 /* Build configuration list for PBXNativeTarget "eaSplitAcceptanceFixture" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				61910BD4E2FBEA37DF135813 /* Debug */,
+				D90761CEABC17D8E28CC16EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

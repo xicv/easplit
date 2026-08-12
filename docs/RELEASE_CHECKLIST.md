@@ -33,7 +33,7 @@ Accessibility control that defines the product.
 
    ```sh
    EASPLIT_NOTARY_PROFILE=eaSplit-notary \
-     EASPLIT_RELEASE_LABEL=0.1.0-beta.3 \
+     EASPLIT_RELEASE_LABEL=0.1.0-beta.4 \
      ./script/release.sh
    ```
 

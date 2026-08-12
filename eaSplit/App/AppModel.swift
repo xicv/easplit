@@ -20,8 +20,9 @@ final class AppModel {
   private let defaults: UserDefaults
   private var lastArrangement: SplitRecipe?
   private var refreshTask: Task<Void, Never>?
+  private var refreshRequested = false
+  private var refreshWaiters: [CheckedContinuation<Void, Never>] = []
   private var preparationTask: Task<Void, Never>?
-  private var refreshGeneration = 0
 
   let recipeStore: RecipeStore
   let launchAtLogin: LaunchAtLoginController
@@ -123,31 +124,41 @@ final class AppModel {
   }
 
   func refreshWindows() {
-    refreshTask?.cancel()
-    refreshGeneration += 1
-    let generation = refreshGeneration
+    enqueueRefresh()
+  }
+
+  private func enqueueRefresh() {
+    refreshRequested = true
     isRefreshing = true
+    guard refreshTask == nil else { return }
+
     refreshTask = Task { @MainActor [weak self] in
-      await self?.refreshWindows(generation: generation)
+      await self?.runRefreshLoop()
     }
   }
 
   private func refreshWindowsForAction() async {
-    refreshTask?.cancel()
-    refreshGeneration += 1
-    let generation = refreshGeneration
-    isRefreshing = true
-    await refreshWindows(generation: generation)
+    await withCheckedContinuation { continuation in
+      refreshWaiters.append(continuation)
+      enqueueRefresh()
+    }
   }
 
-  private func refreshWindows(generation: Int) async {
-    defer {
-      if generation == refreshGeneration {
-        isRefreshing = false
-        refreshTask = nil
-      }
+  private func runRefreshLoop() async {
+    while refreshRequested {
+      refreshRequested = false
+      await performRefresh()
     }
 
+    isRefreshing = false
+    refreshTask = nil
+
+    let waiters = refreshWaiters
+    refreshWaiters.removeAll()
+    waiters.forEach { $0.resume() }
+  }
+
+  private func performRefresh() async {
     let wasAwaitingPermission = isAwaitingPermission
     permissionGranted = accessibilityClient.hasPermission
     launchAtLogin.refresh()
@@ -158,7 +169,7 @@ final class AppModel {
       let discoveredWindows = await accessibilityClient.discoverWindows(
         recentProcessIdentifiers: recentApplicationTracker.processIdentifiers
       )
-      guard !Task.isCancelled, generation == refreshGeneration else { return }
+      guard !refreshRequested else { return }
       windows = discoveredWindows
       reconcileSelection()
       AppLogger.arrangement.debug(

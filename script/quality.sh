@@ -53,6 +53,28 @@ percentage = target.fetch("lineCoverage") * 100
 minimum = 20.0
 puts format("Production line coverage: %.2f%% (minimum %.2f%%)", percentage, minimum)
 abort("Production line coverage is below the minimum") if percentage < minimum
+
+critical_files = {
+  "AppModel.swift" => 75.0,
+  "LayoutEngine.swift" => 95.0,
+  "RecipeStore.swift" => 90.0,
+  "WindowFrameTransaction.swift" => 90.0,
+}
+files = target.fetch("files").to_h { |file| [File.basename(file.fetch("name")), file] }
+
+critical_files.each do |name, file_minimum|
+  file = files[name]
+  abort("Coverage report does not contain critical module #{name}") unless file
+
+  file_percentage = file.fetch("lineCoverage") * 100
+  puts format(
+    "%-30s %.2f%% (minimum %.2f%%)",
+    name,
+    file_percentage,
+    file_minimum
+  )
+  abort("#{name} coverage is below the minimum") if file_percentage < file_minimum
+end
 RUBY
 
 xcodebuild \
