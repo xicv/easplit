@@ -8,6 +8,7 @@ FORM_PATH = File.join(ROOT, ".github/ISSUE_TEMPLATE/beta-feedback.yml")
 form = YAML.safe_load(File.read(FORM_PATH), aliases: false)
 abort("Feedback form must be a YAML mapping") unless form.is_a?(Hash)
 abort("Feedback form must apply the beta-feedback label") unless form.fetch("labels", []).include?("beta-feedback")
+abort("Feedback form must assign new reports to xicv") unless form.fetch("assignees", []).include?("xicv")
 
 body = form.fetch("body")
 abort("Feedback form body must be a non-empty list") unless body.is_a?(Array) && !body.empty?

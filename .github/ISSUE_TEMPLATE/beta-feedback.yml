@@ -3,6 +3,8 @@ description: Report a beta problem or tell us what would make eaSplit more usefu
 title: "[Beta feedback] "
 labels:
   - beta-feedback
+assignees:
+  - xicv
 body:
   - type: markdown
     attributes:
