@@ -19,6 +19,7 @@ done
 cd "$ROOT_DIR"
 git diff --check
 "$ROOT_DIR/script/lint_changed.sh"
+"$ROOT_DIR/script/tests/beta_site_health_test.sh"
 
 /bin/cp "$PROJECT_PATH/project.pbxproj" "$PROJECT_SNAPSHOT"
 xcodegen generate --spec "$ROOT_DIR/project.yml" --project "$ROOT_DIR"

@@ -1,0 +1,30 @@
+name: eaSplit beta download health
+
+on:
+  schedule:
+    - cron: "23 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: beta-download-health
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Test the health verifier
+        run: ./script/tests/beta_site_health_test.sh
+
+      - name: Verify public beta pages and release metadata
+        env:
+          EASPLIT_BETA_VERIFY_MODE: metadata
+          EASPLIT_GITHUB_TOKEN: ${{ github.token }}
+        run: ./script/beta_site_health.sh

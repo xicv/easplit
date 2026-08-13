@@ -19,10 +19,13 @@ Before inviting testers to the GitHub Pages deployment:
 2. Publish that DMG, checksum, and manifest as one GitHub Release, then verify the hosted bytes.
 3. Confirm the privacy page still describes GitHub Pages hosting and its standard
    request-data handling accurately.
-4. Replace the private invitation-channel support wording with a real support
-   destination that is monitored by the developer.
+4. Submit one harmless report through the public beta feedback form and confirm
+   it appears in the filtered Issues inbox and developer notification stream.
 5. Have the beta terms reviewed for the intended countries before a public or
    paid launch.
+
+The operational commands, automation boundary, and feedback triage path are in
+`docs/BETA_OPERATIONS.md`.
 
 Do not add a payment link, license activation, update feed, analytics endpoint,
 or support address until the corresponding real service exists and is tested.

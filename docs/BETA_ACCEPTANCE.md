@@ -87,14 +87,19 @@ silent partial layout, or movement of an unselected window.
 
 ## Website and support
 
+Run `./script/beta_site_health.sh` first. It verifies the public pages, internal
+references, release links, hosted DMG checksum, and release manifest. A passing
+automated check does not replace the clean-Mac or window-management checks above.
+
 1. Verify every navigation and footer link on desktop and mobile widths.
 2. Download the candidate from every download button and compare the bytes.
 3. Follow the public install instructions literally; correct any step that
    relies on developer knowledge.
 4. Confirm the privacy page matches the shipping binary and no network request
    is made by the app.
-5. Send one issue through the invitation feedback channel and verify it reaches
-   the person responsible for the beta.
+5. Send one harmless test report through the public beta feedback form. Confirm
+   it receives the `beta-feedback` label, appears in the filtered Issues inbox,
+   and reaches the developer's GitHub notification stream; then close it.
 
 ## Tester feedback template
 
