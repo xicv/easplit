@@ -7,7 +7,7 @@ FEEDBACK_URL="${EASPLIT_BETA_FEEDBACK_URL:-https://github.com/xicv/easplit/issue
 GITHUB_TOKEN="${EASPLIT_GITHUB_TOKEN:-}"
 VERIFY_MODE="${EASPLIT_BETA_VERIFY_MODE:-full}"
 CURL_RETRY="${EASPLIT_CURL_RETRY:-3}"
-WORK_DIR="$(mktemp -d -t easplit-beta-health)"
+WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/easplit-beta-health.XXXXXX")"
 
 cleanup() {
   rm -rf "$WORK_DIR"

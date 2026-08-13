@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 HEALTH_SCRIPT="$ROOT_DIR/script/beta_site_health.sh"
-FIXTURE_ROOT="$(mktemp -d -t easplit-beta-health-test)"
+FIXTURE_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/easplit-beta-health-test.XXXXXX")"
 SERVER_PID=""
 
 cleanup() {
