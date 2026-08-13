@@ -5,9 +5,9 @@ that has never had an eaSplit development build or signing certificate.
 
 ## Release bytes
 
-- Candidate: `eaSplit-0.1.0-beta.4.dmg`
+- Candidate: `eaSplit-0.1.0-beta.5.dmg`
 - Product version: `0.1.0`
-- Build: `4`
+- Build: `5`
 - Minimum system: macOS 15
 - Architectures: Apple silicon and Intel
 
@@ -18,7 +18,7 @@ after recording its checksum.
 ## Clean-Mac install
 
 1. Download the DMG through the actual hosted beta page.
-2. Compare `shasum -a 256 eaSplit-0.1.0-beta.4.dmg` with the published checksum.
+2. Compare `shasum -a 256 eaSplit-0.1.0-beta.5.dmg` with the published checksum.
 3. Open the DMG in Finder without bypassing any Gatekeeper warning.
 4. Confirm the image contains `eaSplit.app` and an `Applications` shortcut.
 5. Drag eaSplit to Applications, eject the image, and launch the installed copy.
@@ -59,13 +59,25 @@ debug-only gate does not write to the production recipe or suggestion stores.
    must remain behind both newly selected windows.
 8. Disable **Bring split windows forward** and repeat. Verify geometry still
    changes without eaSplit explicitly raising or focusing either window.
-9. Exercise three columns and focus-plus-stack with three windows.
-10. Verify a saved recipe, repeat last split, undo, and deletion.
-11. Assign and exercise each global shortcut, including after quitting and
+9. Open four regular applications, enable **Hide other apps after splitting**,
+   and split two of them. Verify the other two applications are hidden but
+   remain running, while Finder and applications hidden before the split keep
+   their previous state. Verify the behavior applies across Spaces.
+10. Replace slot 2 with an application hidden by the previous focus split and
+    split again. Verify the newly selected application becomes visible, the old
+    slot-2 application is hidden, and unrelated previously hidden applications
+    remain hidden. Undo must restore both the preceding window frames and only
+    the visibility changes from the latest split.
+11. Disable **Hide other apps after splitting** and confirm subsequent splits
+    do not hide unrelated applications. With two selected windows from the same
+    application, confirm eaSplit does not hide that application's other windows.
+12. Exercise three columns and focus-plus-stack with three windows.
+13. Verify a saved recipe, repeat last split, undo, and deletion.
+14. Assign and exercise each global shortcut, including after quitting and
     reopening eaSplit.
-12. Enable and disable launch at login, then verify the approved state after a
+15. Enable and disable launch at login, then verify the approved state after a
     real logout/login cycle.
-13. While another app is active, open eaSplit from the menu bar and select
+16. While another app is active, open eaSplit from the menu bar and select
     **Settings**. Verify the Settings window is active immediately, its controls
     use the active appearance, and no second picker window opens.
 

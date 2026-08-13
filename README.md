@@ -25,6 +25,7 @@ research are recorded in [`docs/PRODUCT_DECISIONS.md`](docs/PRODUCT_DECISIONS.md
 - Saved application recipes stored locally as JSON
 - Repeat-last-split and undo
 - Default-on foreground activation for every successfully arranged window
+- Optional focus mode that hides other visible apps and restores them with Undo
 - Configurable global keyboard shortcuts
 - Native launch-at-login control
 

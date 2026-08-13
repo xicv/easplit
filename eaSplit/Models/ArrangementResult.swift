@@ -30,13 +30,21 @@ struct ArrangementResult: Sendable {
 
   var succeeded: Bool { failures.isEmpty && arrangedCount > 0 }
 
+  func addingWarnings(_ additionalWarnings: [String]) -> ArrangementResult {
+    ArrangementResult(
+      arrangedCount: arrangedCount,
+      failures: failures,
+      warnings: warnings + additionalWarnings
+    )
+  }
+
   func summary(for operation: ArrangementOperation) -> String {
     if failures.isEmpty {
       let noun = arrangedCount == 1 ? "window" : "windows"
       let completion = "\(operation.completedVerb) \(arrangedCount) \(noun)"
       guard let warning = warnings.first else { return completion }
       if warnings.count == 1 { return "\(completion); \(warning)" }
-      return "\(completion); some windows could not be brought forward"
+      return "\(completion); \(warnings.count) follow-up actions need attention"
     }
 
     if arrangedCount == 0 {

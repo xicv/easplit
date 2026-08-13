@@ -47,15 +47,16 @@ Accessibility control that defines the product.
 2. Run `./script/quality.sh`; it is the same test, coverage, lint, generated
    project, and static-analysis gate used by hosted CI.
 3. Exercise Accessibility permission, selection, every layout, ratios, gaps,
-   default-on foreground raising, its opt-out, recipes, repeat, undo, shortcuts,
-   settings, and launch-at-login approval on a fresh standard macOS user account.
+   default-on foreground raising, its opt-out, optional focus-mode application
+   hiding and visibility Undo, recipes, repeat, shortcuts, settings, and
+   launch-at-login approval on a fresh standard macOS user account.
 4. Exercise movable, minimized, fixed-size, multi-window, multi-display, and
    Spaces/full-screen edge cases with representative third-party applications.
 5. Set the stored notarization profile and build the artifact:
 
    ```sh
    EASPLIT_NOTARY_PROFILE=eaSplit-notary \
-     EASPLIT_RELEASE_LABEL=0.1.0-beta.4 \
+     EASPLIT_RELEASE_LABEL=0.1.0-beta.5 \
      ./script/release.sh
    ```
 

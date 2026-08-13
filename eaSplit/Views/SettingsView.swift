@@ -76,6 +76,18 @@ struct SettingsView: View {
           .foregroundStyle(.secondary)
       }
 
+      Section("Focus") {
+        Toggle(
+          "Hide other apps after splitting",
+          isOn: $model.hideOtherApplicationsAfterSplit
+        )
+        .accessibilityIdentifier("hide-other-apps-after-splitting")
+
+        Text("Keeps the selected applications visible and hides other visible apps. Apps stay running; Undo restores only the apps hidden by eaSplit. This applies across all Spaces.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      }
+
       Section("Suggestions") {
         Toggle("Suggest frequent splits", isOn: $model.suggestionsEnabled)
           .accessibilityIdentifier("suggest-frequent-splits")

@@ -11,11 +11,13 @@ final class AppModel {
     static let gap = "windowGap"
     static let edgeToEdgeWindows = "edgeToEdgeWindows"
     static let bringArrangedWindowsForward = "bringArrangedWindowsForward"
+    static let hideOtherApplicationsAfterSplit = "hideOtherApplicationsAfterSplit"
     static let lastArrangement = "lastArrangement"
     static let suggestionsEnabled = "suggestionsEnabled"
   }
 
   private let accessibilityClient: any WindowControlling
+  private let applicationVisibilityController: any ApplicationVisibilityControlling
   private let permissionMonitor: AccessibilityPermissionMonitor
   private let recentApplicationTracker: RecentApplicationTracker
   let historyStore: any ArrangementHistoryStoring
@@ -82,6 +84,15 @@ final class AppModel {
     }
   }
 
+  var hideOtherApplicationsAfterSplit: Bool {
+    didSet {
+      defaults.set(
+        hideOtherApplicationsAfterSplit,
+        forKey: DefaultsKey.hideOtherApplicationsAfterSplit
+      )
+    }
+  }
+
   var suggestionsEnabled: Bool {
     didSet {
       defaults.set(suggestionsEnabled, forKey: DefaultsKey.suggestionsEnabled)
@@ -119,6 +130,8 @@ final class AppModel {
 
   init(
     accessibilityClient: any WindowControlling = AccessibilityWindowClient(),
+    applicationVisibilityController: any ApplicationVisibilityControlling =
+      ApplicationVisibilityController(),
     permissionMonitor: AccessibilityPermissionMonitor = AccessibilityPermissionMonitor(),
     recentApplicationTracker: RecentApplicationTracker = RecentApplicationTracker(),
     recipeStore: RecipeStore = RecipeStore(),
@@ -130,6 +143,7 @@ final class AppModel {
     now: @escaping () -> Date = Date.init
   ) {
     self.accessibilityClient = accessibilityClient
+    self.applicationVisibilityController = applicationVisibilityController
     self.permissionMonitor = permissionMonitor
     self.recentApplicationTracker = recentApplicationTracker
     self.recipeStore = recipeStore
@@ -161,6 +175,10 @@ final class AppModel {
         forKey: DefaultsKey.bringArrangedWindowsForward
       )
     }
+
+    hideOtherApplicationsAfterSplit = defaults.bool(
+      forKey: DefaultsKey.hideOtherApplicationsAfterSplit
+    )
 
     if defaults.object(forKey: DefaultsKey.suggestionsEnabled) == nil {
       suggestionsEnabled = true
@@ -303,45 +321,6 @@ final class AppModel {
     selectedWindowIDs.firstIndex(of: window.id).map { $0 + 1 }
   }
 
-  func applySelection(
-    closePanel: Bool = false,
-    source: ArrangementEvent.Source = .manual
-  ) {
-    guard canApplySelection else {
-      setStatus("Choose exactly \(selectedLayout.slotCount) windows.", isError: true)
-      return
-    }
-
-    let windowIDs = selectedWindowIDs
-    let layout = selectedLayout
-    let ratio = selectedRatio
-    let requestedGap = edgeToEdgeWindows ? 0 : gap
-    let rememberedRecipe = recipe(name: "Last Split", from: windowIDs)
-    isArranging = true
-
-    Task { @MainActor [weak self] in
-      guard let self else { return }
-      let result = await self.accessibilityClient.arrange(
-        windowIDs: windowIDs,
-        layout: layout,
-        ratio: ratio,
-        gap: requestedGap,
-        bringWindowsForward: self.bringArrangedWindowsForward
-      )
-      self.isArranging = false
-      self.canUndo = self.accessibilityClient.hasUndo
-      self.handle(result)
-
-      if result.succeeded {
-        if let rememberedRecipe {
-          self.rememberLastArrangement(rememberedRecipe)
-          self.recordSuccessfulArrangement(rememberedRecipe, source: source)
-        }
-        if closePanel { self.dismissPicker() }
-      }
-    }
-  }
-
   func quickSplit() {
     guard preparationTask == nil, !isArranging else { return }
     preparationTask = Task { @MainActor [weak self] in
@@ -376,9 +355,12 @@ final class AppModel {
     Task { @MainActor [weak self] in
       guard let self else { return }
       let result = await self.accessibilityClient.undo()
+      let visibilityResult = self.applicationVisibilityController.undo()
+      let completedResult = result.addingWarnings(visibilityResult.warnings)
       self.isArranging = false
       self.canUndo = self.accessibilityClient.hasUndo
-      self.handle(result, action: .restore)
+        || self.applicationVisibilityController.hasUndo
+      self.handle(completedResult, action: .restore)
     }
   }
 
@@ -550,5 +532,69 @@ final class AppModel {
   func setStatus(_ message: String, isError: Bool) {
     statusMessage = message
     statusIsError = isError
+  }
+}
+
+extension AppModel {
+  func applySelection(
+    closePanel: Bool = false,
+    source: ArrangementEvent.Source = .manual
+  ) {
+    guard canApplySelection else {
+      setStatus("Choose exactly \(selectedLayout.slotCount) windows.", isError: true)
+      return
+    }
+
+    let windowIDs = selectedWindowIDs
+    let layout = selectedLayout
+    let ratio = selectedRatio
+    let requestedGap = edgeToEdgeWindows ? 0 : gap
+    let rememberedRecipe = recipe(name: "Last Split", from: windowIDs)
+    let visibilityCandidates = windows
+    let selectedProcessIdentifiers = Set(
+      visibilityCandidates
+        .filter { windowIDs.contains($0.id) }
+        .map(\.processIdentifier)
+    )
+    isArranging = true
+
+    Task { @MainActor [weak self] in
+      guard let self else { return }
+      let preparation = self.applicationVisibilityController.prepareForArrangement(
+        selectedProcessIdentifiers: selectedProcessIdentifiers
+      )
+      let result = await self.accessibilityClient.arrange(
+        windowIDs: windowIDs,
+        layout: layout,
+        ratio: ratio,
+        gap: requestedGap,
+        bringWindowsForward: self.bringArrangedWindowsForward
+      )
+      let visibilityResult: ApplicationVisibilityResult
+      if result.succeeded {
+        visibilityResult = self.applicationVisibilityController.completeArrangement(
+          selectedProcessIdentifiers: selectedProcessIdentifiers,
+          candidates: visibilityCandidates,
+          hideOtherApplications: self.hideOtherApplicationsAfterSplit
+        )
+      } else {
+        visibilityResult = self.applicationVisibilityController.cancelArrangement()
+      }
+      let completedResult = result.addingWarnings(
+        preparation.warnings + visibilityResult.warnings
+      )
+      self.isArranging = false
+      self.canUndo = self.accessibilityClient.hasUndo
+        || self.applicationVisibilityController.hasUndo
+      self.handle(completedResult)
+
+      if completedResult.succeeded {
+        if let rememberedRecipe {
+          self.rememberLastArrangement(rememberedRecipe)
+          self.recordSuccessfulArrangement(rememberedRecipe, source: source)
+        }
+        if closePanel { self.dismissPicker() }
+      }
+    }
   }
 }

@@ -1,6 +1,5 @@
 import AppKit
 import Foundation
-import ServiceManagement
 import Testing
 @testable import eaSplit
 
@@ -386,6 +385,7 @@ struct AppModelTests {
       .appendingPathComponent("\(UUID().uuidString).json")
     let recipeStore = RecipeStore(fileURL: recipeURL)
     let historyStore = ArrangementHistoryStore(fileURL: historyURL)
+    let applicationVisibilityController = ApplicationVisibilityControllerSpy()
     let windowController = WindowControllerStub(
       windows: windows,
       arrangementResult: arrangementResult,
@@ -396,6 +396,7 @@ struct AppModelTests {
     let launchAtLoginService = AppModelLaunchAtLoginServiceStub()
     let model = AppModel(
       accessibilityClient: windowController,
+      applicationVisibilityController: applicationVisibilityController,
       recipeStore: recipeStore,
       historyStore: historyStore,
       launchAtLogin: LaunchAtLoginController(service: launchAtLoginService),
@@ -405,6 +406,7 @@ struct AppModelTests {
     return ModelFixture(
       model: model,
       windowController: windowController,
+      applicationVisibilityController: applicationVisibilityController,
       picker: picker,
       recipeStore: recipeStore,
       launchAtLoginService: launchAtLoginService,
@@ -484,116 +486,4 @@ struct AppModelTests {
       isFocused: false
     )
   }
-}
-
-@MainActor
-struct ModelFixture {
-  let model: AppModel
-  let windowController: WindowControllerStub
-  let picker: PickerPresenterSpy
-  let recipeStore: RecipeStore
-  let launchAtLoginService: AppModelLaunchAtLoginServiceStub
-  let defaults: UserDefaults
-  let suiteName: String
-  let recipeURL: URL
-  let historyURL: URL
-
-  func cleanUp() {
-    defaults.removePersistentDomain(forName: suiteName)
-    try? FileManager.default.removeItem(at: recipeURL)
-    try? FileManager.default.removeItem(at: historyURL)
-  }
-}
-
-@MainActor
-final class AppModelLaunchAtLoginServiceStub: LaunchAtLoginServicing {
-  private(set) var statusRequestCount = 0
-
-  var status: SMAppService.Status {
-    statusRequestCount += 1
-    return .notRegistered
-  }
-
-  func register() throws {}
-  func unregister() throws {}
-  func openSystemSettingsLoginItems() {}
-}
-
-@MainActor
-final class WindowControllerStub: WindowControlling {
-  let hasPermission = true
-  var hasUndo = true
-  var windows: [WindowDescriptor]
-  private(set) var discoverCallCount = 0
-  private(set) var maximumConcurrentDiscoveries = 0
-  private(set) var arrangeCallCount = 0
-  private(set) var arrangedWindowIDs: [UUID] = []
-  private(set) var arrangedGap: CGFloat?
-  private(set) var broughtArrangedWindowsForward: Bool?
-
-  private let arrangementResult: ArrangementResult
-  private let undoResult: ArrangementResult
-  private let blockFirstDiscovery: Bool
-  private var concurrentDiscoveries = 0
-  private var firstDiscoveryContinuation: CheckedContinuation<Void, Never>?
-
-  init(
-    windows: [WindowDescriptor],
-    arrangementResult: ArrangementResult,
-    undoResult: ArrangementResult,
-    blockFirstDiscovery: Bool
-  ) {
-    self.windows = windows
-    self.arrangementResult = arrangementResult
-    self.undoResult = undoResult
-    self.blockFirstDiscovery = blockFirstDiscovery
-  }
-
-  func requestPermission() -> Bool { hasPermission }
-  func openAccessibilitySettings() {}
-
-  func discoverWindows(recentProcessIdentifiers: [pid_t]) async -> [WindowDescriptor] {
-    discoverCallCount += 1
-    concurrentDiscoveries += 1
-    maximumConcurrentDiscoveries = max(maximumConcurrentDiscoveries, concurrentDiscoveries)
-    if blockFirstDiscovery, discoverCallCount == 1 {
-      await withCheckedContinuation { continuation in
-        firstDiscoveryContinuation = continuation
-      }
-    }
-    concurrentDiscoveries -= 1
-    return windows
-  }
-
-  func releaseFirstDiscovery() {
-    firstDiscoveryContinuation?.resume()
-    firstDiscoveryContinuation = nil
-  }
-
-  func arrange(
-    windowIDs: [UUID],
-    layout: SplitLayout,
-    ratio: SplitRatio,
-    gap: CGFloat,
-    bringWindowsForward: Bool
-  ) async -> ArrangementResult {
-    arrangeCallCount += 1
-    arrangedWindowIDs = windowIDs
-    arrangedGap = gap
-    broughtArrangedWindowsForward = bringWindowsForward
-    return arrangementResult
-  }
-
-  func undo() async -> ArrangementResult {
-    undoResult
-  }
-}
-
-@MainActor
-final class PickerPresenterSpy: PickerPresenting {
-  private(set) var dismissCount = 0
-  private(set) var showCount = 0
-
-  func show(model: AppModel) { showCount += 1 }
-  func dismiss() { dismissCount += 1 }
 }
