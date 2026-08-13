@@ -403,6 +403,7 @@ button {
 }
 
 .workflow-band h2,
+.update-section h2,
 .recipe-section h2,
 .final-cta h2 {
   margin: 0;
@@ -410,6 +411,24 @@ button {
   font-weight: 690;
   letter-spacing: -0.05em;
   line-height: 1.06;
+}
+
+.release-badge,
+.eyebrow {
+  color: #9fc8ff;
+  font-size: 14px;
+  font-weight: 680;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.release-badge {
+  display: inline-flex;
+  margin-bottom: 22px;
+  padding: 7px 11px;
+  border: 1px solid rgba(77, 161, 255, 0.45);
+  border-radius: 999px;
+  background: var(--accent-soft);
 }
 
 .workflow-band h2 {
@@ -489,6 +508,40 @@ button {
 
 .recipe-section {
   padding-block: 112px;
+}
+
+.update-section {
+  padding-block: 112px 0;
+}
+
+.eyebrow {
+  margin: 0 0 14px;
+}
+
+.update-grid {
+  display: grid;
+  margin-top: 48px;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.update-card {
+  padding: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: rgba(6, 13, 23, 0.76);
+}
+
+.update-card h3 {
+  margin: 0 0 10px;
+  font-size: 21px;
+  letter-spacing: -0.025em;
+}
+
+.update-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
 }
 
 .recipe-demo {
@@ -938,6 +991,14 @@ button {
 
   .recipe-section {
     padding-block: 82px;
+  }
+
+  .update-section {
+    padding-top: 82px;
+  }
+
+  .update-grid {
+    grid-template-columns: 1fr;
   }
 
   .recipe-demo fieldset {

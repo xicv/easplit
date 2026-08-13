@@ -53,7 +53,14 @@
           <code>~/Library/Application Support/eaSplit/recipes.json</code>. Preferences and the
           last arrangement are stored in the standard local macOS preferences system.
         </p>
-        <p>Window titles are not stored in recipes.</p>
+        <p>
+          If frequent-split suggestions are enabled, eaSplit stores up to 100 successful
+          arrangement records from the last 90 days in
+          <code>~/Library/Application Support/eaSplit/arrangement-history.json</code>. A record
+          contains application names and bundle identifiers, layout, ratio, spacing, time,
+          and how the split was started. You can reset this history in Settings.
+        </p>
+        <p>Window titles and document contents are not stored in recipes or suggestion history.</p>
       </section>
 
       <section class="document-section">
@@ -80,7 +87,7 @@
           During the private beta, use the same invitation channel that provided your download.
           Include the app version and macOS version, but do not send private window titles or documents.
         </p>
-        <p>Last updated: 11 August 2026.</p>
+        <p>Last updated: 13 August 2026.</p>
       </section>
     </main>
 
