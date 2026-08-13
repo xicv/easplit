@@ -4,17 +4,20 @@ set -euo pipefail
 MODE="${1:-run}"
 APP_NAME="eaSplit"
 BUNDLE_ID="com.xicao.easplit.debug"
+DISPLAY_NAME="eaSplit Development"
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DERIVED_DATA="$ROOT_DIR/.build/DerivedData"
 BUILT_APP_BUNDLE="$DERIVED_DATA/Build/Products/Debug/$APP_NAME.app"
 RUN_APP_BUNDLE="/Users/xicao/Applications/eaSplit Development.app"
 APP_BINARY="$RUN_APP_BUNDLE/Contents/MacOS/$APP_NAME"
 LAUNCH_SERVICES_REGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+ACCEPTANCE_DIRECTORY="$ROOT_DIR/.build/acceptance"
+ACCEPTANCE_REPORT="$ACCEPTANCE_DIRECTORY/report.json"
 
 case "$MODE" in
-  run|--debug|debug|--logs|logs|--telemetry|telemetry|--verify|verify) ;;
+  run|--debug|debug|--logs|logs|--telemetry|telemetry|--verify|verify|--acceptance|acceptance) ;;
   *)
-    echo "usage: $0 [run|--debug|--logs|--telemetry|--verify]" >&2
+    echo "usage: $0 [run|--debug|--logs|--telemetry|--verify|--acceptance]" >&2
     exit 2
     ;;
 esac
@@ -52,6 +55,14 @@ if [[ "$ACTUAL_BUNDLE_ID" != "$BUNDLE_ID" ]]; then
   echo "Expected bundle identifier $BUNDLE_ID, found $ACTUAL_BUNDLE_ID" >&2
   exit 1
 fi
+
+for key in CFBundleDisplayName CFBundleName; do
+  actual_name="$(/usr/libexec/PlistBuddy -c "Print :$key" "$BUILT_APP_BUNDLE/Contents/Info.plist")"
+  if [[ "$actual_name" != "$DISPLAY_NAME" ]]; then
+    echo "Expected $key $DISPLAY_NAME, found $actual_name" >&2
+    exit 1
+  fi
+done
 
 if [[ "$RUN_APP_BUNDLE" != "/Users/xicao/Applications/eaSplit Development.app" ]]; then
   echo "Refusing to replace an unexpected application path: $RUN_APP_BUNDLE" >&2
@@ -92,5 +103,27 @@ case "$MODE" in
     open_app
     sleep 1
     [[ -n "$(running_development_pids)" ]]
+    ;;
+  --acceptance|acceptance)
+    /bin/mkdir -p "$ACCEPTANCE_DIRECTORY"
+    /bin/rm -f "$ACCEPTANCE_REPORT"
+    /bin/rm -rf "$ACCEPTANCE_DIRECTORY/data"
+    /usr/bin/open -n "$RUN_APP_BUNDLE" --args --acceptance-report "$ACCEPTANCE_REPORT"
+
+    for _ in {1..1000}; do
+      [[ -f "$ACCEPTANCE_REPORT" ]] && break
+      sleep 0.1
+    done
+
+    if [[ ! -f "$ACCEPTANCE_REPORT" ]]; then
+      echo "Timed out waiting for the acceptance report" >&2
+      open_app
+      exit 1
+    fi
+
+    /bin/cat "$ACCEPTANCE_REPORT"
+    acceptance_passed="$(/usr/bin/plutil -extract passed raw "$ACCEPTANCE_REPORT")"
+    open_app
+    [[ "$acceptance_passed" == "true" ]]
     ;;
 esac

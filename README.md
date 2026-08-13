@@ -21,8 +21,10 @@ research are recorded in [`docs/PRODUCT_DECISIONS.md`](docs/PRODUCT_DECISIONS.md
 - Equal columns, equal rows, three columns, and focus-plus-stack layouts
 - 50/50 and 60/40 ratios with configurable gaps or edge-to-edge placement
 - Recent-application ordering and automatic default selection
+- Local frequent-split suggestions learned from successful arrangements
 - Saved application recipes stored locally as JSON
 - Repeat-last-split and undo
+- Default-on foreground activation for every successfully arranged window
 - Configurable global keyboard shortcuts
 - Native launch-at-login control
 

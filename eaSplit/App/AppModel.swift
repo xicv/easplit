@@ -10,14 +10,19 @@ final class AppModel {
     static let selectedRatio = "selectedRatio"
     static let gap = "windowGap"
     static let edgeToEdgeWindows = "edgeToEdgeWindows"
+    static let bringArrangedWindowsForward = "bringArrangedWindowsForward"
     static let lastArrangement = "lastArrangement"
+    static let suggestionsEnabled = "suggestionsEnabled"
   }
 
   private let accessibilityClient: any WindowControlling
   private let permissionMonitor: AccessibilityPermissionMonitor
   private let recentApplicationTracker: RecentApplicationTracker
+  let historyStore: any ArrangementHistoryStoring
+  let suggestionRanker: SplitSuggestionRanker
   private let pickerPanelCoordinator: any PickerPresenting
   private let defaults: UserDefaults
+  let now: () -> Date
   private var lastArrangement: SplitRecipe?
   private var refreshTask: Task<Void, Never>?
   private var refreshRequested = false
@@ -36,6 +41,7 @@ final class AppModel {
   var canUndo = false
   var statusMessage: String?
   var statusIsError = false
+  var suggestion: SplitSuggestion?
 
   var selectedLayout: SplitLayout {
     didSet {
@@ -67,6 +73,22 @@ final class AppModel {
     }
   }
 
+  var bringArrangedWindowsForward: Bool {
+    didSet {
+      defaults.set(
+        bringArrangedWindowsForward,
+        forKey: DefaultsKey.bringArrangedWindowsForward
+      )
+    }
+  }
+
+  var suggestionsEnabled: Bool {
+    didSet {
+      defaults.set(suggestionsEnabled, forKey: DefaultsKey.suggestionsEnabled)
+      updateSuggestion()
+    }
+  }
+
   var canApplySelection: Bool {
     permissionGranted
       && !isArranging
@@ -76,6 +98,17 @@ final class AppModel {
 
   var canRepeatLastSplit: Bool {
     lastArrangement != nil && !isArranging && !isRefreshing
+  }
+
+  var canApplySuggestion: Bool {
+    suggestion != nil && permissionGranted && !isArranging && !isRefreshing
+  }
+
+  var suggestedWindows: [WindowDescriptor] {
+    guard let suggestion else { return [] }
+    return suggestion.windowIDs.compactMap { id in
+      windows.first { $0.id == id }
+    }
   }
 
   var applicationDisplayName: String {
@@ -89,17 +122,23 @@ final class AppModel {
     permissionMonitor: AccessibilityPermissionMonitor = AccessibilityPermissionMonitor(),
     recentApplicationTracker: RecentApplicationTracker = RecentApplicationTracker(),
     recipeStore: RecipeStore = RecipeStore(),
+    historyStore: any ArrangementHistoryStoring = ArrangementHistoryStore(),
+    suggestionRanker: SplitSuggestionRanker = SplitSuggestionRanker(),
     launchAtLogin: LaunchAtLoginController = LaunchAtLoginController(),
     pickerPanelCoordinator: any PickerPresenting = PickerPanelCoordinator(),
-    defaults: UserDefaults = .standard
+    defaults: UserDefaults = .standard,
+    now: @escaping () -> Date = Date.init
   ) {
     self.accessibilityClient = accessibilityClient
     self.permissionMonitor = permissionMonitor
     self.recentApplicationTracker = recentApplicationTracker
     self.recipeStore = recipeStore
+    self.historyStore = historyStore
+    self.suggestionRanker = suggestionRanker
     self.launchAtLogin = launchAtLogin
     self.pickerPanelCoordinator = pickerPanelCoordinator
     self.defaults = defaults
+    self.now = now
 
     let storedLayout = defaults.string(forKey: DefaultsKey.selectedLayout)
     selectedLayout = SplitLayout(rawValue: storedLayout ?? "") ?? .twoColumns
@@ -115,6 +154,20 @@ final class AppModel {
 
     edgeToEdgeWindows = defaults.bool(forKey: DefaultsKey.edgeToEdgeWindows)
 
+    if defaults.object(forKey: DefaultsKey.bringArrangedWindowsForward) == nil {
+      bringArrangedWindowsForward = true
+    } else {
+      bringArrangedWindowsForward = defaults.bool(
+        forKey: DefaultsKey.bringArrangedWindowsForward
+      )
+    }
+
+    if defaults.object(forKey: DefaultsKey.suggestionsEnabled) == nil {
+      suggestionsEnabled = true
+    } else {
+      suggestionsEnabled = defaults.bool(forKey: DefaultsKey.suggestionsEnabled)
+    }
+
     if let data = defaults.data(forKey: DefaultsKey.lastArrangement),
       let decoded = try? JSONDecoder().decode(SplitRecipe.self, from: data)
     {
@@ -125,6 +178,11 @@ final class AppModel {
 
   func refreshWindows() {
     enqueueRefresh()
+  }
+
+  func refreshSettings() {
+    permissionGranted = accessibilityClient.hasPermission
+    launchAtLogin.refresh()
   }
 
   private func enqueueRefresh() {
@@ -161,7 +219,6 @@ final class AppModel {
   private func performRefresh() async {
     let wasAwaitingPermission = isAwaitingPermission
     permissionGranted = accessibilityClient.hasPermission
-    launchAtLogin.refresh()
 
     if permissionGranted {
       permissionMonitor.stop()
@@ -170,12 +227,20 @@ final class AppModel {
         recentProcessIdentifiers: recentApplicationTracker.processIdentifiers
       )
       guard !refreshRequested else { return }
+      let availableIDs = Set(discoveredWindows.map(\.id))
+      let selectedWindowDisappeared = selectedWindowIDs.contains {
+        !availableIDs.contains($0)
+      }
       windows = discoveredWindows
-      reconcileSelection()
+      reconcileSelection(fillMissingSlots: !selectedWindowDisappeared)
+      updateSuggestion()
       AppLogger.arrangement.debug(
         "Discovered \(self.windows.count, privacy: .public) eligible windows")
       if wasAwaitingPermission {
         setStatus("Accessibility access granted.", isError: false)
+      }
+      if selectedWindowDisappeared {
+        setStatus("A selected window is no longer available.", isError: true)
       }
     } else {
       windows = []
@@ -238,7 +303,10 @@ final class AppModel {
     selectedWindowIDs.firstIndex(of: window.id).map { $0 + 1 }
   }
 
-  func applySelection(closePanel: Bool = false) {
+  func applySelection(
+    closePanel: Bool = false,
+    source: ArrangementEvent.Source = .manual
+  ) {
     guard canApplySelection else {
       setStatus("Choose exactly \(selectedLayout.slotCount) windows.", isError: true)
       return
@@ -257,7 +325,8 @@ final class AppModel {
         windowIDs: windowIDs,
         layout: layout,
         ratio: ratio,
-        gap: requestedGap
+        gap: requestedGap,
+        bringWindowsForward: self.bringArrangedWindowsForward
       )
       self.isArranging = false
       self.canUndo = self.accessibilityClient.hasUndo
@@ -266,6 +335,7 @@ final class AppModel {
       if result.succeeded {
         if let rememberedRecipe {
           self.rememberLastArrangement(rememberedRecipe)
+          self.recordSuccessfulArrangement(rememberedRecipe, source: source)
         }
         if closePanel { self.dismissPicker() }
       }
@@ -287,7 +357,7 @@ final class AppModel {
 
       self.selectedLayout = .twoColumns
       self.selectedWindowIDs = windowIDs
-      self.applySelection(closePanel: false)
+      self.applySelection(closePanel: false, source: .quickSplit)
     }
   }
 
@@ -297,7 +367,7 @@ final class AppModel {
       showPicker()
       return
     }
-    apply(lastArrangement, closePanel: false)
+    apply(lastArrangement, closePanel: false, source: .repeatLast)
   }
 
   func undo() {
@@ -308,7 +378,7 @@ final class AppModel {
       let result = await self.accessibilityClient.undo()
       self.isArranging = false
       self.canUndo = self.accessibilityClient.hasUndo
-      self.handle(result)
+      self.handle(result, action: .restore)
     }
   }
 
@@ -329,6 +399,7 @@ final class AppModel {
       setStatus(errorMessage, isError: true)
     } else {
       setStatus("Saved “\(name)”.", isError: false)
+      updateSuggestion()
     }
   }
 
@@ -337,13 +408,18 @@ final class AppModel {
     if let errorMessage = recipeStore.errorMessage {
       setStatus(errorMessage, isError: true)
     }
+    updateSuggestion()
   }
 
   func canApply(_ recipe: SplitRecipe) -> Bool {
     resolvedWindowIDs(for: recipe).count == recipe.slots.count
   }
 
-  func apply(_ recipe: SplitRecipe, closePanel: Bool = false) {
+  func apply(
+    _ recipe: SplitRecipe,
+    closePanel: Bool = false,
+    source: ArrangementEvent.Source = .savedRecipe
+  ) {
     guard preparationTask == nil, !isArranging else { return }
     preparationTask = Task { @MainActor [weak self] in
       guard let self else { return }
@@ -357,12 +433,16 @@ final class AppModel {
 
       self.selectedLayout = recipe.layout
       self.selectedRatio = recipe.ratio
+      if let spacing = recipe.spacing {
+        self.edgeToEdgeWindows = spacing.edgeToEdge
+        self.gap = spacing.gap
+      }
       self.selectedWindowIDs = ids
-      self.applySelection(closePanel: closePanel)
+      self.applySelection(closePanel: closePanel, source: source)
     }
   }
 
-  private func reconcileSelection() {
+  private func reconcileSelection(fillMissingSlots: Bool = true) {
     let availableIDs = Set(windows.map(\.id))
     selectedWindowIDs = selectedWindowIDs.filter { availableIDs.contains($0) }
 
@@ -370,7 +450,7 @@ final class AppModel {
       selectedWindowIDs = Array(selectedWindowIDs.prefix(selectedLayout.slotCount))
     }
 
-    if selectedWindowIDs.count < selectedLayout.slotCount {
+    if fillMissingSlots, selectedWindowIDs.count < selectedLayout.slotCount {
       let replacements = defaultWindowIDs(count: selectedLayout.slotCount)
         .filter { !selectedWindowIDs.contains($0) }
       selectedWindowIDs.append(
@@ -417,7 +497,13 @@ final class AppModel {
     }
     guard slots.count == selectedWindows.count else { return nil }
 
-    return SplitRecipe(name: name, layout: selectedLayout, ratio: selectedRatio, slots: slots)
+    return SplitRecipe(
+      name: name,
+      layout: selectedLayout,
+      ratio: selectedRatio,
+      slots: slots,
+      spacing: currentSpacing
+    )
   }
 
   private func resolvedWindowIDs(for recipe: SplitRecipe) -> [UUID] {
@@ -438,18 +524,30 @@ final class AppModel {
     return result
   }
 
-  private func handle(_ result: ArrangementResult) {
-    setStatus(result.summary, isError: result.arrangedCount == 0 || !result.failures.isEmpty)
+  private func handle(
+    _ result: ArrangementResult,
+    action: ArrangementOperation = .arrange
+  ) {
+    setStatus(
+      result.summary(for: action),
+      isError: result.arrangedCount == 0 || !result.failures.isEmpty
+    )
+    for warning in result.warnings {
+      AppLogger.arrangement.warning("Arrangement warning: \(warning, privacy: .public)")
+    }
     if result.succeeded {
       AppLogger.arrangement.info("Arranged \(result.arrangedCount, privacy: .public) windows")
     } else {
       AppLogger.arrangement.error(
         "Arrangement completed with \(result.failures.count, privacy: .public) failures"
       )
+      for failure in result.failures {
+        AppLogger.arrangement.error("Arrangement failure: \(failure, privacy: .public)")
+      }
     }
   }
 
-  private func setStatus(_ message: String, isError: Bool) {
+  func setStatus(_ message: String, isError: Bool) {
     statusMessage = message
     statusIsError = isError
   }

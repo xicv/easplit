@@ -7,10 +7,14 @@ enum PickerPresentation {
 }
 
 struct SplitPickerView: View {
+  @Environment(\.openSettings) private var openSettings
+
   @Bindable var model: AppModel
   let presentation: PickerPresentation
 
   @State private var showingSaveSheet = false
+
+  private let settingsPresentationController = SettingsPresentationController()
 
   var body: some View {
     VStack(spacing: 0) {
@@ -74,7 +78,11 @@ struct SplitPickerView: View {
       .help("Refresh windows")
       .accessibilityIdentifier("refresh-windows")
 
-      SettingsLink {
+      Button {
+        settingsPresentationController.presentSettings {
+          openSettings()
+        }
+      } label: {
         Image(systemName: "gearshape")
       }
       .buttonStyle(.borderless)
@@ -110,6 +118,16 @@ struct SplitPickerView: View {
     VStack(spacing: 0) {
       ScrollView {
         VStack(alignment: .leading, spacing: 18) {
+          if let suggestion = model.suggestion {
+            SuggestedSplitCard(
+              suggestion: suggestion,
+              windows: model.suggestedWindows,
+              isEnabled: model.canApplySuggestion,
+              apply: { model.applySuggestion(closePanel: presentation == .panel) },
+              suppress: model.suppressSuggestion
+            )
+          }
+
           LayoutPicker(selection: $model.selectedLayout)
 
           windowsSection

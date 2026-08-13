@@ -49,4 +49,17 @@ final class AppPresentationControllerTests: XCTestCase {
 
     XCTAssertEqual(presentationCount, 2)
   }
+
+  func testSettingsPresentationActivatesApplicationBeforeOpeningWindow() {
+    var events: [String] = []
+    let controller = SettingsPresentationController {
+      events.append("activated")
+    }
+
+    controller.presentSettings {
+      events.append("opened")
+    }
+
+    XCTAssertEqual(events, ["activated", "opened"])
+  }
 }

@@ -3,14 +3,6 @@ import ApplicationServices
 
 @MainActor
 final class AccessibilityWindowClient: WindowControlling {
-  private final class AXElement: @unchecked Sendable {
-    let value: AXUIElement
-
-    init(_ value: AXUIElement) {
-      self.value = value
-    }
-  }
-
   private struct AXWindowFrameAccessor: WindowFrameAccessing {
     func frame(of handle: AXElement) -> CGRect? {
       AccessibilityWindowClient.frame(of: handle.value)
@@ -45,7 +37,7 @@ final class AccessibilityWindowClient: WindowControlling {
     }
 
     func waitForWindowToSettle() {
-      Thread.sleep(forTimeInterval: 0.015)
+      Thread.sleep(forTimeInterval: 0.025)
     }
   }
 
@@ -123,6 +115,7 @@ final class AccessibilityWindowClient: WindowControlling {
       return []
     }
 
+    let startedAt = DispatchTime.now().uptimeNanoseconds
     let currentProcessIdentifier = ProcessInfo.processInfo.processIdentifier
     let rank = Dictionary(
       uniqueKeysWithValues: recentProcessIdentifiers.enumerated().map { ($1, $0) }
@@ -147,21 +140,24 @@ final class AccessibilityWindowClient: WindowControlling {
         bundleIdentifier: $0.bundleIdentifier
       )
     }
-    let iconsByProcessIdentifier = Dictionary(
-      uniqueKeysWithValues: applications.map { application in
-        let applicationName = application.localizedName ?? "Application"
-        let icon =
-          application.icon
-          ?? NSImage(systemSymbolName: "app", accessibilityDescription: applicationName)
-          ?? NSImage()
-        return (application.processIdentifier, icon)
-      }
-    )
     let screens = screenSnapshots()
-
     let rawWindows = await Self.discoverWindows(in: candidates, screens: screens)
 
     guard !Task.isCancelled, hasPermission else { return [] }
+
+    let discoveredProcessIdentifiers = Set(rawWindows.map(\.processIdentifier))
+    let iconPairs: [(pid_t, NSImage)] = applications.compactMap { application in
+      guard discoveredProcessIdentifiers.contains(application.processIdentifier) else {
+        return nil
+      }
+      let applicationName = application.localizedName ?? "Application"
+      let icon =
+        application.icon
+        ?? NSImage(systemSymbolName: "app", accessibilityDescription: applicationName)
+        ?? NSImage()
+      return (application.processIdentifier, icon)
+    }
+    let iconsByProcessIdentifier = Dictionary(uniqueKeysWithValues: iconPairs)
 
     var nextRecords: [UUID: WindowRecord] = [:]
     var nextStableIdentifiers: [WindowKey: UUID] = [:]
@@ -187,20 +183,27 @@ final class AccessibilityWindowClient: WindowControlling {
 
     records = nextRecords
     stableIdentifiers = nextStableIdentifiers
-    return discovered.sorted { left, right in
+    let sorted = discovered.sorted { left, right in
       let leftRank = rank[left.processIdentifier] ?? Int.max
       let rightRank = rank[right.processIdentifier] ?? Int.max
       if leftRank != rightRank { return leftRank < rightRank }
       if left.isFocused != right.isFocused { return left.isFocused }
       return left.displayTitle.localizedStandardCompare(right.displayTitle) == .orderedAscending
     }
+    let elapsedMilliseconds =
+      (DispatchTime.now().uptimeNanoseconds - startedAt) / 1_000_000
+    AppLogger.performance.debug(
+      "Window discovery took \(elapsedMilliseconds, privacy: .public) ms; scanned \(candidates.count, privacy: .public) apps; found \(sorted.count, privacy: .public) windows"
+    )
+    return sorted
   }
 
   func arrange(
     windowIDs: [UUID],
     layout: SplitLayout,
     ratio: SplitRatio,
-    gap: CGFloat
+    gap: CGFloat,
+    bringWindowsForward: Bool
   ) async -> ArrangementResult {
     guard windowIDs.count == layout.slotCount else {
       return ArrangementResult(
@@ -255,9 +258,13 @@ final class AccessibilityWindowClient: WindowControlling {
     let failures = outcomes.compactMap { outcome in
       outcome.failure.map { "\(outcome.applicationName): \($0)" }
     }
+    let warnings = bringWindowsForward
+      ? await Self.bringSuccessfulWindowsForward(outcomes)
+      : []
     return ArrangementResult(
       arrangedCount: outcomes.count - failures.count,
-      failures: failures
+      failures: failures,
+      warnings: warnings
     )
   }
 
@@ -454,6 +461,16 @@ final class AccessibilityWindowClient: WindowControlling {
     }
   }
 
+  @concurrent nonisolated private static func bringSuccessfulWindowsForward(
+    _ outcomes: [WindowFrameOutcome<AXElement>]
+  ) async -> [String] {
+    guard !Task.isCancelled else { return [] }
+    let transaction = WindowForegroundTransaction(
+      accessor: AXWindowForegroundAccessor()
+    )
+    return transaction.applySuccessful(outcomes)
+  }
+
   nonisolated private static func framesMatch(
     _ actual: CGRect,
     _ expected: CGRect,
@@ -512,4 +529,5 @@ final class AccessibilityWindowClient: WindowControlling {
     default: "window update failed (\(error.rawValue))"
     }
   }
+
 }

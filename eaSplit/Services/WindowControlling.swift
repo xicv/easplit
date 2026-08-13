@@ -14,7 +14,8 @@ protocol WindowControlling: AnyObject {
     windowIDs: [UUID],
     layout: SplitLayout,
     ratio: SplitRatio,
-    gap: CGFloat
+    gap: CGFloat,
+    bringWindowsForward: Bool
   ) async -> ArrangementResult
   func undo() async -> ArrangementResult
 }

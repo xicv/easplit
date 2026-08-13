@@ -26,6 +26,14 @@ SOURCE_COMMIT="$(/usr/bin/plutil -extract sourceCommit raw -o - "$MANIFEST")"
 RELEASE_LABEL="$(/usr/bin/plutil -extract releaseLabel raw -o - "$MANIFEST")"
 DMG_FILE="$(/usr/bin/plutil -extract dmgFile raw -o - "$MANIFEST")"
 TAG="v$RELEASE_LABEL"
+RELEASE_NOTES="$ROOT_DIR/docs/releases/$RELEASE_LABEL.md"
+
+if [[ ! -f "$RELEASE_NOTES" ]]; then
+  echo "Missing release notes: $RELEASE_NOTES" >&2
+  exit 1
+fi
+
+"$ROOT_DIR/script/verify_release.sh" "$RELEASE_DIR"
 
 if [[ "$SOURCE_COMMIT" != "$(git rev-parse HEAD)" ]]; then
   echo "Manifest source commit does not match HEAD." >&2
@@ -45,18 +53,6 @@ if [[ "$CHECK_CONCLUSION" != "success" ]]; then
   exit 1
 fi
 
-for file in "$DMG_FILE" "$DMG_FILE.sha256"; do
-  if [[ "$file" == */* || ! -f "$RELEASE_DIR/$file" ]]; then
-    echo "Missing release asset: $file" >&2
-    exit 1
-  fi
-done
-
-(
-  cd "$RELEASE_DIR"
-  /usr/bin/shasum -a 256 -c "$DMG_FILE.sha256"
-)
-
 if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
   if [[ "$(git rev-list -n 1 "$TAG")" != "$SOURCE_COMMIT" ]]; then
     echo "Existing tag $TAG does not identify the manifest commit." >&2
@@ -74,6 +70,6 @@ gh release create "$TAG" \
   --prerelease \
   --verify-tag \
   --title "eaSplit $RELEASE_LABEL" \
-  --notes "Signed and Apple-notarized eaSplit beta for macOS 15 or later. See the release manifest for exact source, build, notarization, and checksum provenance."
+  --notes-file "$RELEASE_NOTES"
 
 echo "Published GitHub release: $TAG ($SOURCE_COMMIT)"

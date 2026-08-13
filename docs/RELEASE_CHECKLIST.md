@@ -25,8 +25,8 @@ Accessibility control that defines the product.
 2. Run `./script/quality.sh`; it is the same test, coverage, lint, generated
    project, and static-analysis gate used by hosted CI.
 3. Exercise Accessibility permission, selection, every layout, ratios, gaps,
-   recipes, repeat, undo, shortcuts, settings, and launch-at-login approval on
-   a fresh standard macOS user account.
+   default-on foreground raising, its opt-out, recipes, repeat, undo, shortcuts,
+   settings, and launch-at-login approval on a fresh standard macOS user account.
 4. Exercise movable, minimized, fixed-size, multi-window, multi-display, and
    Spaces/full-screen edge cases with representative third-party applications.
 5. Set the stored notarization profile and build the artifact:
@@ -50,4 +50,8 @@ Accessibility control that defines the product.
 Hardened Runtime enabled, free of development and sandbox entitlements,
 notarization-stapled, and accepted by Gatekeeper. The generated DMG also fails
 closed unless its outer image is Developer ID signed, notarized, stapled, and
-accepted by Gatekeeper.
+accepted by Gatekeeper. It finishes by running `script/verify_release.sh`, which
+rechecks both checksums, both notarization records, the ZIP, DMG signature and
+ticket, mounted app signature and ticket, architectures, version, and build.
+The publication script runs the same verifier again before creating a tag or
+GitHub release.

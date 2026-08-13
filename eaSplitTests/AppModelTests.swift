@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import ServiceManagement
 import Testing
 @testable import eaSplit
 
@@ -56,6 +57,129 @@ struct AppModelTests {
   }
 
   @Test
+  func twoSuccessfulArrangementsCreateAFrequentSuggestion() async throws {
+    let fixture = try makeFixture(
+      arrangementResult: ArrangementResult(arrangedCount: 2, failures: [])
+    )
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+    fixture.model.applySelection()
+    await waitWhile { fixture.model.isArranging }
+    #expect(fixture.model.suggestion == nil)
+
+    fixture.model.applySelection()
+    await waitWhile { fixture.model.isArranging }
+
+    #expect(fixture.model.suggestion?.reason == .frequentlyUsed(count: 2))
+    #expect(fixture.model.suggestion?.windowIDs == fixture.windowController.windows.map(\.id))
+  }
+
+  @Test
+  func savedSuggestionAppliesItsCompleteArrangementInOneAction() async throws {
+    let fixture = try makeFixture(
+      arrangementResult: ArrangementResult(arrangedCount: 2, failures: [])
+    )
+    defer { fixture.cleanUp() }
+    fixture.recipeStore.add(
+      SplitRecipe(
+        name: "Writing",
+        layout: .twoRows,
+        ratio: .leading,
+        slots: [
+          .init(bundleIdentifier: "com.apple.Safari", applicationName: "Safari"),
+          .init(bundleIdentifier: "com.apple.Notes", applicationName: "Notes"),
+        ],
+        spacing: .init(edgeToEdge: false, gap: 14)
+      )
+    )
+
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+    #expect(fixture.model.suggestion?.reason == .saved(name: "Writing"))
+
+    fixture.model.applySuggestion(closePanel: true)
+    await waitWhile { fixture.model.isArranging }
+
+    #expect(fixture.model.selectedLayout == .twoRows)
+    #expect(fixture.model.selectedRatio == .leading)
+    #expect(fixture.model.gap == 14)
+    #expect(fixture.windowController.arrangedWindowIDs == fixture.windowController.windows.map(\.id))
+    #expect(fixture.windowController.arrangedGap == 14)
+    #expect(fixture.picker.dismissCount == 1)
+  }
+
+  @Test
+  func failedArrangementIsNeverLearned() async throws {
+    let fixture = try makeFixture(
+      arrangementResult: ArrangementResult(
+        arrangedCount: 1,
+        failures: ["Notes: the application did not respond"]
+      )
+    )
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+    fixture.model.applySelection()
+    await waitWhile { fixture.model.isArranging }
+    fixture.model.applySelection()
+    await waitWhile { fixture.model.isArranging }
+
+    #expect(fixture.model.suggestion == nil)
+  }
+
+  @Test
+  func disablingSuggestionsStopsLearningAndClearsPresentation() async throws {
+    let fixture = try makeFixture(
+      arrangementResult: ArrangementResult(arrangedCount: 2, failures: [])
+    )
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+    fixture.model.suggestionsEnabled = false
+    fixture.model.applySelection()
+    await waitWhile { fixture.model.isArranging }
+    fixture.model.applySelection()
+    await waitWhile { fixture.model.isArranging }
+
+    #expect(fixture.model.suggestion == nil)
+  }
+
+  @Test
+  func successfulUndoReportsRestoredWindows() async throws {
+    let fixture = try makeFixture(
+      undoResult: ArrangementResult(arrangedCount: 2, failures: [])
+    )
+    defer { fixture.cleanUp() }
+
+    fixture.model.undo()
+    await waitWhile { fixture.model.isArranging }
+
+    #expect(fixture.model.statusMessage == "Restored 2 windows")
+    #expect(!fixture.model.statusIsError)
+  }
+
+  @Test
+  func partialUndoReportsWindowsThatCouldNotBeRestored() async throws {
+    let fixture = try makeFixture(
+      undoResult: ArrangementResult(
+        arrangedCount: 1,
+        failures: ["Notes: the application did not respond"]
+      )
+    )
+    defer { fixture.cleanUp() }
+
+    fixture.model.undo()
+    await waitWhile { fixture.model.isArranging }
+
+    #expect(fixture.model.statusMessage == "Restored 1; 1 could not be restored")
+    #expect(fixture.model.statusIsError)
+  }
+
+  @Test
   func initializationDefersWindowDiscoveryUntilRefresh() async throws {
     let fixture = try makeFixture()
     defer { fixture.cleanUp() }
@@ -66,6 +190,28 @@ struct AppModelTests {
     fixture.model.refreshWindows()
     await waitWhile { fixture.model.isRefreshing }
     #expect(fixture.windowController.discoverCallCount == 1)
+  }
+
+  @Test
+  func windowRefreshDoesNotQueryLaunchAtLoginStatus() async throws {
+    let fixture = try makeFixture()
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+
+    #expect(fixture.launchAtLoginService.statusRequestCount == 0)
+  }
+
+  @Test
+  func settingsRefreshLoadsLaunchAtLoginStatus() throws {
+    let fixture = try makeFixture()
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshSettings()
+
+    #expect(fixture.model.launchAtLogin.hasLoadedStatus)
+    #expect(fixture.launchAtLoginService.statusRequestCount == 1)
   }
 
   @Test
@@ -182,6 +328,30 @@ struct AppModelTests {
   }
 
   @Test
+  func refreshDoesNotReplaceASelectedWindowThatDisappeared() async throws {
+    let initialWindows = Self.makeWindows() + [
+      Self.makeWindow(processIdentifier: 300, applicationName: "Calendar"),
+      Self.makeWindow(processIdentifier: 400, applicationName: "Messages"),
+    ]
+    let fixture = try makeFixture(windows: initialWindows)
+    defer { fixture.cleanUp() }
+
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+    fixture.model.selectedLayout = .threeColumns
+    fixture.model.selectedWindowIDs = Array(initialWindows.prefix(3).map(\.id))
+
+    fixture.windowController.windows = [initialWindows[0], initialWindows[1], initialWindows[3]]
+    fixture.model.refreshWindows()
+    await waitWhile { fixture.model.isRefreshing }
+
+    #expect(fixture.model.selectedWindowIDs == Array(initialWindows.prefix(2).map(\.id)))
+    #expect(!fixture.model.canApplySelection)
+    #expect(fixture.model.statusMessage == "A selected window is no longer available.")
+    #expect(fixture.model.statusIsError)
+  }
+
+  @Test
   func savedRecipeTrimsItsNameAndPersistsTheCurrentSelection() async throws {
     let fixture = try makeFixture()
     defer { fixture.cleanUp() }
@@ -199,25 +369,36 @@ struct AppModelTests {
     #expect(!fixture.model.statusIsError)
   }
 
-  private func makeFixture(
+  func makeFixture(
     windows: [WindowDescriptor] = Self.makeWindows(),
     arrangementResult: ArrangementResult = ArrangementResult(arrangedCount: 0, failures: []),
+    undoResult: ArrangementResult = ArrangementResult(
+      arrangedCount: 0,
+      failures: ["Nothing to undo"]
+    ),
     blockFirstDiscovery: Bool = false
   ) throws -> ModelFixture {
     let suiteName = "AppModelTests.\(UUID().uuidString)"
     let defaults = try #require(UserDefaults(suiteName: suiteName))
     let recipeURL = FileManager.default.temporaryDirectory
       .appendingPathComponent("\(UUID().uuidString).json")
+    let historyURL = FileManager.default.temporaryDirectory
+      .appendingPathComponent("\(UUID().uuidString).json")
     let recipeStore = RecipeStore(fileURL: recipeURL)
+    let historyStore = ArrangementHistoryStore(fileURL: historyURL)
     let windowController = WindowControllerStub(
       windows: windows,
       arrangementResult: arrangementResult,
+      undoResult: undoResult,
       blockFirstDiscovery: blockFirstDiscovery
     )
     let picker = PickerPresenterSpy()
+    let launchAtLoginService = AppModelLaunchAtLoginServiceStub()
     let model = AppModel(
       accessibilityClient: windowController,
       recipeStore: recipeStore,
+      historyStore: historyStore,
+      launchAtLogin: LaunchAtLoginController(service: launchAtLoginService),
       pickerPanelCoordinator: picker,
       defaults: defaults
     )
@@ -226,13 +407,15 @@ struct AppModelTests {
       windowController: windowController,
       picker: picker,
       recipeStore: recipeStore,
+      launchAtLoginService: launchAtLoginService,
       defaults: defaults,
       suiteName: suiteName,
-      recipeURL: recipeURL
+      recipeURL: recipeURL,
+      historyURL: historyURL
     )
   }
 
-  private func waitWhile(_ condition: @escaping @MainActor () -> Bool) async {
+  func waitWhile(_ condition: @escaping @MainActor () -> Bool) async {
     for _ in 0..<100 where condition() {
       await Task.yield()
     }
@@ -285,36 +468,71 @@ struct AppModelTests {
       )
     }
   }
-}
 
-@MainActor
-private struct ModelFixture {
-  let model: AppModel
-  let windowController: WindowControllerStub
-  let picker: PickerPresenterSpy
-  let recipeStore: RecipeStore
-  let defaults: UserDefaults
-  let suiteName: String
-  let recipeURL: URL
-
-  func cleanUp() {
-    defaults.removePersistentDomain(forName: suiteName)
-    try? FileManager.default.removeItem(at: recipeURL)
+  private static func makeWindow(
+    processIdentifier: pid_t,
+    applicationName: String
+  ) -> WindowDescriptor {
+    WindowDescriptor(
+      id: UUID(),
+      processIdentifier: processIdentifier,
+      applicationName: applicationName,
+      bundleIdentifier: "com.example.\(applicationName.lowercased())",
+      title: applicationName,
+      icon: NSImage(),
+      frame: CGRect(x: 0, y: 0, width: 500, height: 800),
+      isFocused: false
+    )
   }
 }
 
 @MainActor
-private final class WindowControllerStub: WindowControlling {
+struct ModelFixture {
+  let model: AppModel
+  let windowController: WindowControllerStub
+  let picker: PickerPresenterSpy
+  let recipeStore: RecipeStore
+  let launchAtLoginService: AppModelLaunchAtLoginServiceStub
+  let defaults: UserDefaults
+  let suiteName: String
+  let recipeURL: URL
+  let historyURL: URL
+
+  func cleanUp() {
+    defaults.removePersistentDomain(forName: suiteName)
+    try? FileManager.default.removeItem(at: recipeURL)
+    try? FileManager.default.removeItem(at: historyURL)
+  }
+}
+
+@MainActor
+final class AppModelLaunchAtLoginServiceStub: LaunchAtLoginServicing {
+  private(set) var statusRequestCount = 0
+
+  var status: SMAppService.Status {
+    statusRequestCount += 1
+    return .notRegistered
+  }
+
+  func register() throws {}
+  func unregister() throws {}
+  func openSystemSettingsLoginItems() {}
+}
+
+@MainActor
+final class WindowControllerStub: WindowControlling {
   let hasPermission = true
   var hasUndo = true
-  let windows: [WindowDescriptor]
+  var windows: [WindowDescriptor]
   private(set) var discoverCallCount = 0
   private(set) var maximumConcurrentDiscoveries = 0
   private(set) var arrangeCallCount = 0
   private(set) var arrangedWindowIDs: [UUID] = []
   private(set) var arrangedGap: CGFloat?
+  private(set) var broughtArrangedWindowsForward: Bool?
 
   private let arrangementResult: ArrangementResult
+  private let undoResult: ArrangementResult
   private let blockFirstDiscovery: Bool
   private var concurrentDiscoveries = 0
   private var firstDiscoveryContinuation: CheckedContinuation<Void, Never>?
@@ -322,10 +540,12 @@ private final class WindowControllerStub: WindowControlling {
   init(
     windows: [WindowDescriptor],
     arrangementResult: ArrangementResult,
+    undoResult: ArrangementResult,
     blockFirstDiscovery: Bool
   ) {
     self.windows = windows
     self.arrangementResult = arrangementResult
+    self.undoResult = undoResult
     self.blockFirstDiscovery = blockFirstDiscovery
   }
 
@@ -354,21 +574,23 @@ private final class WindowControllerStub: WindowControlling {
     windowIDs: [UUID],
     layout: SplitLayout,
     ratio: SplitRatio,
-    gap: CGFloat
+    gap: CGFloat,
+    bringWindowsForward: Bool
   ) async -> ArrangementResult {
     arrangeCallCount += 1
     arrangedWindowIDs = windowIDs
     arrangedGap = gap
+    broughtArrangedWindowsForward = bringWindowsForward
     return arrangementResult
   }
 
   func undo() async -> ArrangementResult {
-    ArrangementResult(arrangedCount: 0, failures: ["Nothing to undo"])
+    undoResult
   }
 }
 
 @MainActor
-private final class PickerPresenterSpy: PickerPresenting {
+final class PickerPresenterSpy: PickerPresenting {
   private(set) var dismissCount = 0
   private(set) var showCount = 0
 

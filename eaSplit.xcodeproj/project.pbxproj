@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1AABB42293690D8B2DB84162 /* AppPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799162504F286ED0E396F235 /* AppPresentationController.swift */; };
+		1AD9093DB87DDCF73FF671BC /* SettingsPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42031A9232912DA6EFED3182 /* SettingsPresentationController.swift */; };
+		1BF1754BC69A6C6816DF7F09 /* SplitSuggestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E398AA6B3409B603FCC07FE3 /* SplitSuggestion.swift */; };
 		1F7CE061DDA7AD4F27FCD768 /* AccessibilityPermissionMonitorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EABF74C27D0E5A204403F7C3 /* AccessibilityPermissionMonitorTests.swift */; };
 		27B5620D4E9083DC56011261 /* AppPresentationControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 279AC1AECBA5E00FDDED4EF1 /* AppPresentationControllerTests.swift */; };
 		2F24CCD1063D3CFE9E7128FE /* LayoutEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CBFABDD63C3AF3E27951B9 /* LayoutEngineTests.swift */; };
@@ -19,18 +21,25 @@
 		500B156785D6BE3059C49619 /* RecipeStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A77945E2983A2BD5EF0117F0 /* RecipeStoreTests.swift */; };
 		58C45B55EA0FE4B6A68BA25A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D18F0DAA9A6C43272B2BEF77 /* AppModel.swift */; };
 		64D0DBD21866F910CAEE5083 /* PickerPresenting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E57097E3E7D73D5103BA4FC /* PickerPresenting.swift */; };
+		6AA433FA1BE074E9BB9CD4DE /* DebugAcceptanceScenarioTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D1983019C4FEDBAF1EB023B /* DebugAcceptanceScenarioTests.swift */; };
+		6C470A469165A516F4517254 /* ArrangementHistoryStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF99C930594E034C9C16210A /* ArrangementHistoryStoreTests.swift */; };
 		6C9C34F5272F68E518647583 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 1C8745816071A48109C03BED /* KeyboardShortcuts */; };
 		7801B9FA22131E44E52E6818 /* WindowFrameTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E62AB4C5A173F8086B39FE /* WindowFrameTransaction.swift */; };
+		7ED5506719ECEE4A27314DDF /* ForegroundArrangementTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2B931E6059DF7CB348839C9 /* ForegroundArrangementTests.swift */; };
+		880EC82E6B8B0123EB60BC0E /* SuggestedSplitCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C84EB677E45D4A5E3F716E41 /* SuggestedSplitCard.swift */; };
 		8B073088D7B009B1A7681A03 /* LaunchAtLoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F9FD3636C3BBD5552721F0F /* LaunchAtLoginController.swift */; };
 		8D15C3A738A2FEA4A373B745 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E124B4EE22D5BF948C916BA /* main.swift */; };
 		8FDD79D22AF6999E48BFB842 /* PermissionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BBC4D1CAB45E9E01840E35 /* PermissionView.swift */; };
 		9AAFEAA6851772F160498EAF /* SplitRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8657081A985684462E426266 /* SplitRecipe.swift */; };
+		9C38699B8A6E8A9CBC1B5C34 /* SplitSuggestionRanker.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED695F19D1BA93FF3471755 /* SplitSuggestionRanker.swift */; };
+		A3238428F9B95E5FB0E6905D /* AppModel+Suggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4257E5A9F988BAFA719DBE41 /* AppModel+Suggestions.swift */; };
 		A4BEFF1BD47C3866FB4B5ACF /* RecentApplicationTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47039AF71C8A85FB327C7FDB /* RecentApplicationTracker.swift */; };
 		A5855616C1E5F316A404C876 /* LayoutGlyph.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F509E222B2F19572CA88DC /* LayoutGlyph.swift */; };
 		A82F9D81784145BC3B908FE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4872C5DEA03FEBA6F2E53FE1 /* Assets.xcassets */; };
 		A9E7EABB3DEA0FB309DBFBD6 /* ArrangementResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98970B79170FE9BA5D126B89 /* ArrangementResult.swift */; };
 		AEED7A183BC5B3AFFC48B191 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B8B025B784FE91F1CFF661F /* SettingsView.swift */; };
 		AFFA04589C92FC2FB0F835CD /* WindowFrameTransactionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D4EC5C28D3020D6300D177 /* WindowFrameTransactionTests.swift */; };
+		BBA5CBEA5B0710C507018858 /* ArrangementHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251F6974D0F2FA011219C422 /* ArrangementHistoryStore.swift */; };
 		C1154568AAE3F28077695E54 /* WindowControlling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C5BB6EDA1F8445978443B4 /* WindowControlling.swift */; };
 		C7F85812D2B6725C85FA8E57 /* RecipeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6882E8C1F44100D338CF63CC /* RecipeStore.swift */; };
 		D09E76CBC35E45F78BC45846 /* LayoutOptionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC747B64CE8210CC35B4E567 /* LayoutOptionButton.swift */; };
@@ -41,7 +50,12 @@
 		E442664E6547B5E547AA713E /* PickerPanelCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE3EB830D830F31A275F27A /* PickerPanelCoordinator.swift */; };
 		E4B41B65CCD4F7028DE709A6 /* eaSplitApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB5F223AB74FA4C4F796F016 /* eaSplitApp.swift */; };
 		E5487FF008369E8394DD0E38 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E94E483ACC9E7B6C1B426F /* AppModelTests.swift */; };
+		EB69791E078970944EDC1E07 /* LaunchAtLoginControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75C34A12791D57C543F1638 /* LaunchAtLoginControllerTests.swift */; };
+		EC513136000500D92970FFE0 /* DebugAcceptanceLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E97BF2EFDC6E012BCBACE61 /* DebugAcceptanceLaunch.swift */; };
 		EF67D6037A3627E92F68B1CB /* AccessibilityWindowClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42472A8F9602A5A1A553193F /* AccessibilityWindowClient.swift */; };
+		F2DA1E3E8153AC96341CAEC2 /* DebugAcceptanceScenarioRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12C1F8E1DDC31B09FFB0911 /* DebugAcceptanceScenarioRunner.swift */; };
+		F7D0D8830B4AA538F461561E /* SplitSuggestionRankerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA1DF7DD01C4B32F3A441C8 /* SplitSuggestionRankerTests.swift */; };
+		F8631FF093FE353A3E8FE411 /* AXWindowForegroundAccessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7957C8249549AD25A7542F61 /* AXWindowForegroundAccessor.swift */; };
 		F9B26A1ECB18DA790A966BB2 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7052E790667A060B77411B7F /* AppLogger.swift */; };
 		FA6FFDA125E13B2EE4F1AA26 /* RecipeRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72371AB6EAD5C43066EE4B57 /* RecipeRow.swift */; };
 		FC4781E359FB389A0D22EC5E /* ThirdPartyNotices.txt in Resources */ = {isa = PBXBuildFile; fileRef = 27BC9E9FF52E116DA7D78B27 /* ThirdPartyNotices.txt */; };
@@ -61,13 +75,17 @@
 		10687A2EAD7586B82FAF173A /* SaveRecipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRecipeView.swift; sourceTree = "<group>"; };
 		144657F60FF42F63C941E534 /* SplitLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitLayout.swift; sourceTree = "<group>"; };
 		14D4EC5C28D3020D6300D177 /* WindowFrameTransactionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameTransactionTests.swift; sourceTree = "<group>"; };
+		1D1983019C4FEDBAF1EB023B /* DebugAcceptanceScenarioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAcceptanceScenarioTests.swift; sourceTree = "<group>"; };
 		1D966D22C5BFADF8733E7844 /* WindowDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowDescriptor.swift; sourceTree = "<group>"; };
 		24E94E483ACC9E7B6C1B426F /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
+		251F6974D0F2FA011219C422 /* ArrangementHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrangementHistoryStore.swift; sourceTree = "<group>"; };
 		25664A8CB2D24F9F71B88A1A /* eaSplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = eaSplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		279AC1AECBA5E00FDDED4EF1 /* AppPresentationControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPresentationControllerTests.swift; sourceTree = "<group>"; };
 		27BC9E9FF52E116DA7D78B27 /* ThirdPartyNotices.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ThirdPartyNotices.txt; sourceTree = "<group>"; };
 		3E57097E3E7D73D5103BA4FC /* PickerPresenting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerPresenting.swift; sourceTree = "<group>"; };
+		42031A9232912DA6EFED3182 /* SettingsPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPresentationController.swift; sourceTree = "<group>"; };
 		42472A8F9602A5A1A553193F /* AccessibilityWindowClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityWindowClient.swift; sourceTree = "<group>"; };
+		4257E5A9F988BAFA719DBE41 /* AppModel+Suggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppModel+Suggestions.swift"; sourceTree = "<group>"; };
 		47039AF71C8A85FB327C7FDB /* RecentApplicationTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentApplicationTracker.swift; sourceTree = "<group>"; };
 		4872C5DEA03FEBA6F2E53FE1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4B8B025B784FE91F1CFF661F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -77,9 +95,12 @@
 		6882E8C1F44100D338CF63CC /* RecipeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStore.swift; sourceTree = "<group>"; };
 		7052E790667A060B77411B7F /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		72371AB6EAD5C43066EE4B57 /* RecipeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRow.swift; sourceTree = "<group>"; };
+		7957C8249549AD25A7542F61 /* AXWindowForegroundAccessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXWindowForegroundAccessor.swift; sourceTree = "<group>"; };
 		799162504F286ED0E396F235 /* AppPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPresentationController.swift; sourceTree = "<group>"; };
+		7E97BF2EFDC6E012BCBACE61 /* DebugAcceptanceLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAcceptanceLaunch.swift; sourceTree = "<group>"; };
 		82BBC4D1CAB45E9E01840E35 /* PermissionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionView.swift; sourceTree = "<group>"; };
 		8657081A985684462E426266 /* SplitRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitRecipe.swift; sourceTree = "<group>"; };
+		8DA1DF7DD01C4B32F3A441C8 /* SplitSuggestionRankerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitSuggestionRankerTests.swift; sourceTree = "<group>"; };
 		923084179A9A1B844657BDA1 /* eaSplitAcceptanceFixture.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eaSplitAcceptanceFixture.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9746FA7AEF708BD4B2C204D0 /* AccessibilityPermissionMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionMonitor.swift; sourceTree = "<group>"; };
 		98970B79170FE9BA5D126B89 /* ArrangementResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrangementResult.swift; sourceTree = "<group>"; };
@@ -88,16 +109,23 @@
 		A77945E2983A2BD5EF0117F0 /* RecipeStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeStoreTests.swift; sourceTree = "<group>"; };
 		AFE3EB830D830F31A275F27A /* PickerPanelCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerPanelCoordinator.swift; sourceTree = "<group>"; };
 		C1B43510EC6D0ADBB3672E36 /* eaSplit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = eaSplit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2B931E6059DF7CB348839C9 /* ForegroundArrangementTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundArrangementTests.swift; sourceTree = "<group>"; };
 		C3E62AB4C5A173F8086B39FE /* WindowFrameTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowFrameTransaction.swift; sourceTree = "<group>"; };
+		C84EB677E45D4A5E3F716E41 /* SuggestedSplitCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestedSplitCard.swift; sourceTree = "<group>"; };
 		CB5F223AB74FA4C4F796F016 /* eaSplitApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = eaSplitApp.swift; sourceTree = "<group>"; };
 		CBFF2CE327B0198F855D1D91 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		CCD6CEB1601F4B1885BFA61F /* SplitPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitPickerView.swift; sourceTree = "<group>"; };
 		D18F0DAA9A6C43272B2BEF77 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		D6CBFABDD63C3AF3E27951B9 /* LayoutEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutEngineTests.swift; sourceTree = "<group>"; };
+		D75C34A12791D57C543F1638 /* LaunchAtLoginControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLoginControllerTests.swift; sourceTree = "<group>"; };
 		DC747B64CE8210CC35B4E567 /* LayoutOptionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutOptionButton.swift; sourceTree = "<group>"; };
+		DF99C930594E034C9C16210A /* ArrangementHistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrangementHistoryStoreTests.swift; sourceTree = "<group>"; };
+		E398AA6B3409B603FCC07FE3 /* SplitSuggestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitSuggestion.swift; sourceTree = "<group>"; };
 		EABF74C27D0E5A204403F7C3 /* AccessibilityPermissionMonitorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityPermissionMonitorTests.swift; sourceTree = "<group>"; };
 		EEC4995DDA9A938DBCE64AD0 /* HotKeyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyService.swift; sourceTree = "<group>"; };
+		EED695F19D1BA93FF3471755 /* SplitSuggestionRanker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitSuggestionRanker.swift; sourceTree = "<group>"; };
 		F0F509E222B2F19572CA88DC /* LayoutGlyph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayoutGlyph.swift; sourceTree = "<group>"; };
+		F12C1F8E1DDC31B09FFB0911 /* DebugAcceptanceScenarioRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugAcceptanceScenarioRunner.swift; sourceTree = "<group>"; };
 		FC3664EF4B9C16DDBB41CF7A /* WindowRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,12 +146,15 @@
 			children = (
 				9746FA7AEF708BD4B2C204D0 /* AccessibilityPermissionMonitor.swift */,
 				42472A8F9602A5A1A553193F /* AccessibilityWindowClient.swift */,
+				7957C8249549AD25A7542F61 /* AXWindowForegroundAccessor.swift */,
 				EEC4995DDA9A938DBCE64AD0 /* HotKeyService.swift */,
 				9F9FD3636C3BBD5552721F0F /* LaunchAtLoginController.swift */,
 				A46E344AE12C32AF2D13EE5D /* LayoutEngine.swift */,
 				AFE3EB830D830F31A275F27A /* PickerPanelCoordinator.swift */,
 				3E57097E3E7D73D5103BA4FC /* PickerPresenting.swift */,
 				47039AF71C8A85FB327C7FDB /* RecentApplicationTracker.swift */,
+				42031A9232912DA6EFED3182 /* SettingsPresentationController.swift */,
+				EED695F19D1BA93FF3471755 /* SplitSuggestionRanker.swift */,
 				50C5BB6EDA1F8445978443B4 /* WindowControlling.swift */,
 				C3E62AB4C5A173F8086B39FE /* WindowFrameTransaction.swift */,
 			);
@@ -136,6 +167,7 @@
 				98970B79170FE9BA5D126B89 /* ArrangementResult.swift */,
 				144657F60FF42F63C941E534 /* SplitLayout.swift */,
 				8657081A985684462E426266 /* SplitRecipe.swift */,
+				E398AA6B3409B603FCC07FE3 /* SplitSuggestion.swift */,
 				1D966D22C5BFADF8733E7844 /* WindowDescriptor.swift */,
 			);
 			path = Models;
@@ -158,6 +190,8 @@
 			isa = PBXGroup;
 			children = (
 				7052E790667A060B77411B7F /* AppLogger.swift */,
+				7E97BF2EFDC6E012BCBACE61 /* DebugAcceptanceLaunch.swift */,
+				F12C1F8E1DDC31B09FFB0911 /* DebugAcceptanceScenarioRunner.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -186,8 +220,13 @@
 				EABF74C27D0E5A204403F7C3 /* AccessibilityPermissionMonitorTests.swift */,
 				24E94E483ACC9E7B6C1B426F /* AppModelTests.swift */,
 				279AC1AECBA5E00FDDED4EF1 /* AppPresentationControllerTests.swift */,
+				DF99C930594E034C9C16210A /* ArrangementHistoryStoreTests.swift */,
+				1D1983019C4FEDBAF1EB023B /* DebugAcceptanceScenarioTests.swift */,
+				C2B931E6059DF7CB348839C9 /* ForegroundArrangementTests.swift */,
+				D75C34A12791D57C543F1638 /* LaunchAtLoginControllerTests.swift */,
 				D6CBFABDD63C3AF3E27951B9 /* LayoutEngineTests.swift */,
 				A77945E2983A2BD5EF0117F0 /* RecipeStoreTests.swift */,
+				8DA1DF7DD01C4B32F3A441C8 /* SplitSuggestionRankerTests.swift */,
 				14D4EC5C28D3020D6300D177 /* WindowFrameTransactionTests.swift */,
 			);
 			path = eaSplitTests;
@@ -219,6 +258,7 @@
 			isa = PBXGroup;
 			children = (
 				D18F0DAA9A6C43272B2BEF77 /* AppModel.swift */,
+				4257E5A9F988BAFA719DBE41 /* AppModel+Suggestions.swift */,
 				799162504F286ED0E396F235 /* AppPresentationController.swift */,
 				CB5F223AB74FA4C4F796F016 /* eaSplitApp.swift */,
 			);
@@ -245,6 +285,7 @@
 				10687A2EAD7586B82FAF173A /* SaveRecipeView.swift */,
 				4B8B025B784FE91F1CFF661F /* SettingsView.swift */,
 				CCD6CEB1601F4B1885BFA61F /* SplitPickerView.swift */,
+				C84EB677E45D4A5E3F716E41 /* SuggestedSplitCard.swift */,
 				3CCC5434798DDE622944254A /* Components */,
 			);
 			path = Views;
@@ -253,6 +294,7 @@
 		F86DBC2E22E48133455AE0E8 /* Stores */ = {
 			isa = PBXGroup;
 			children = (
+				251F6974D0F2FA011219C422 /* ArrangementHistoryStore.swift */,
 				6882E8C1F44100D338CF63CC /* RecipeStore.swift */,
 			);
 			path = Stores;
@@ -391,8 +433,13 @@
 				1F7CE061DDA7AD4F27FCD768 /* AccessibilityPermissionMonitorTests.swift in Sources */,
 				E5487FF008369E8394DD0E38 /* AppModelTests.swift in Sources */,
 				27B5620D4E9083DC56011261 /* AppPresentationControllerTests.swift in Sources */,
+				6C470A469165A516F4517254 /* ArrangementHistoryStoreTests.swift in Sources */,
+				6AA433FA1BE074E9BB9CD4DE /* DebugAcceptanceScenarioTests.swift in Sources */,
+				7ED5506719ECEE4A27314DDF /* ForegroundArrangementTests.swift in Sources */,
+				EB69791E078970944EDC1E07 /* LaunchAtLoginControllerTests.swift in Sources */,
 				2F24CCD1063D3CFE9E7128FE /* LayoutEngineTests.swift in Sources */,
 				500B156785D6BE3059C49619 /* RecipeStoreTests.swift in Sources */,
+				F7D0D8830B4AA538F461561E /* SplitSuggestionRankerTests.swift in Sources */,
 				AFFA04589C92FC2FB0F835CD /* WindowFrameTransactionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,12 +448,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8631FF093FE353A3E8FE411 /* AXWindowForegroundAccessor.swift in Sources */,
 				D578FBDABC7D01964682FBC2 /* AccessibilityPermissionMonitor.swift in Sources */,
 				EF67D6037A3627E92F68B1CB /* AccessibilityWindowClient.swift in Sources */,
 				F9B26A1ECB18DA790A966BB2 /* AppLogger.swift in Sources */,
+				A3238428F9B95E5FB0E6905D /* AppModel+Suggestions.swift in Sources */,
 				58C45B55EA0FE4B6A68BA25A /* AppModel.swift in Sources */,
 				1AABB42293690D8B2DB84162 /* AppPresentationController.swift in Sources */,
+				BBA5CBEA5B0710C507018858 /* ArrangementHistoryStore.swift in Sources */,
 				A9E7EABB3DEA0FB309DBFBD6 /* ArrangementResult.swift in Sources */,
+				EC513136000500D92970FFE0 /* DebugAcceptanceLaunch.swift in Sources */,
+				F2DA1E3E8153AC96341CAEC2 /* DebugAcceptanceScenarioRunner.swift in Sources */,
 				32D5451C4D3A2316198592CD /* HotKeyService.swift in Sources */,
 				8B073088D7B009B1A7681A03 /* LaunchAtLoginController.swift in Sources */,
 				D820905304317D349134471D /* LayoutEngine.swift in Sources */,
@@ -420,10 +472,14 @@
 				FA6FFDA125E13B2EE4F1AA26 /* RecipeRow.swift in Sources */,
 				C7F85812D2B6725C85FA8E57 /* RecipeStore.swift in Sources */,
 				D7DBE9F262EAB9B51B2676E9 /* SaveRecipeView.swift in Sources */,
+				1AD9093DB87DDCF73FF671BC /* SettingsPresentationController.swift in Sources */,
 				AEED7A183BC5B3AFFC48B191 /* SettingsView.swift in Sources */,
 				392F2D98097535621FC04B15 /* SplitLayout.swift in Sources */,
 				4A4D0C5E276E2C60062EB630 /* SplitPickerView.swift in Sources */,
 				9AAFEAA6851772F160498EAF /* SplitRecipe.swift in Sources */,
+				1BF1754BC69A6C6816DF7F09 /* SplitSuggestion.swift in Sources */,
+				9C38699B8A6E8A9CBC1B5C34 /* SplitSuggestionRanker.swift in Sources */,
+				880EC82E6B8B0123EB60BC0E /* SuggestedSplitCard.swift in Sources */,
 				C1154568AAE3F28077695E54 /* WindowControlling.swift in Sources */,
 				4F821DA5FDA3FC1BF4D40307 /* WindowDescriptor.swift in Sources */,
 				7801B9FA22131E44E52E6818 /* WindowFrameTransaction.swift in Sources */,

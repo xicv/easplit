@@ -4,6 +4,8 @@ import SwiftUI
 struct SettingsView: View {
   @Bindable var model: AppModel
 
+  @State private var showingResetSuggestionsConfirmation = false
+
   var body: some View {
     TabView {
       generalSettings
@@ -12,11 +14,21 @@ struct SettingsView: View {
       shortcutSettings
         .tabItem { Label("Shortcuts", systemImage: "keyboard") }
     }
-    .frame(width: 520, height: 350)
+    .frame(width: 520, height: 430)
     .scenePadding()
     .onAppear {
       model.dismissPicker()
-      model.refreshWindows()
+      model.refreshSettings()
+    }
+    .confirmationDialog(
+      "Reset learned suggestions?",
+      isPresented: $showingResetSuggestionsConfirmation
+    ) {
+      Button("Reset Learned Suggestions", role: .destructive) {
+        model.resetSuggestions()
+      }
+    } message: {
+      Text("eaSplit will forget frequently used combinations. Saved splits are not removed.")
     }
   }
 
@@ -52,6 +64,29 @@ struct SettingsView: View {
             .frame(width: 38, alignment: .trailing)
         }
         .disabled(model.edgeToEdgeWindows)
+
+        Toggle(
+          "Bring split windows forward",
+          isOn: $model.bringArrangedWindowsForward
+        )
+        .accessibilityIdentifier("bring-split-windows-forward")
+
+        Text("Raises the selected windows after every split. The first selected window receives keyboard focus.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+      }
+
+      Section("Suggestions") {
+        Toggle("Suggest frequent splits", isOn: $model.suggestionsEnabled)
+          .accessibilityIdentifier("suggest-frequent-splits")
+
+        Text("Learns only from successful eaSplit actions. Application combinations stay on this Mac; window titles are never saved.")
+          .font(.caption)
+          .foregroundStyle(.secondary)
+
+        Button("Reset Learned Suggestions…") {
+          showingResetSuggestionsConfirmation = true
+        }
       }
 
       Section("Startup") {

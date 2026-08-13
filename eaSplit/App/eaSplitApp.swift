@@ -6,9 +6,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   let model: AppModel
   private let presentationController: AppPresentationController
   private let hotKeyService: HotKeyService
+#if DEBUG
+  private let debugAcceptanceLaunch: DebugAcceptanceLaunch?
+#endif
 
   override init() {
+#if DEBUG
+    let debugAcceptanceLaunch = DebugAcceptanceLaunch()
+    self.debugAcceptanceLaunch = debugAcceptanceLaunch
+    let model = debugAcceptanceLaunch?.model ?? AppModel()
+#else
     let model = AppModel()
+#endif
     self.model = model
     presentationController = AppPresentationController {
       model.showPicker()
@@ -23,6 +32,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
   func applicationDidFinishLaunching(_ notification: Notification) {
     NSApp.setActivationPolicy(.accessory)
+#if DEBUG
+    if let debugAcceptanceLaunch {
+      Task { @MainActor in
+        await debugAcceptanceLaunch.run()
+        NSApp.terminate(nil)
+      }
+      return
+    }
+#endif
     presentationController.presentInitialPickerIfNeeded()
   }
 

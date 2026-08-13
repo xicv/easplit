@@ -79,4 +79,31 @@ final class RecipeStoreTests: XCTestCase {
     XCTAssertTrue(store.recipes.isEmpty)
     XCTAssertNotNil(store.errorMessage)
   }
+
+  func testRecipeWithoutSpacingRemainsReadable() throws {
+    let directory = FileManager.default.temporaryDirectory
+      .appendingPathComponent(UUID().uuidString, isDirectory: true)
+    let fileURL = directory.appendingPathComponent("recipes.json")
+    defer { try? FileManager.default.removeItem(at: directory) }
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let legacyRecipe = """
+      [{
+        "id":"2780E570-3BD3-4826-86A2-C1E64215C537",
+        "name":"Legacy",
+        "layout":"twoColumns",
+        "ratio":"equal",
+        "slots":[
+          {"bundleIdentifier":"com.apple.Safari","applicationName":"Safari"},
+          {"bundleIdentifier":"com.apple.Notes","applicationName":"Notes"}
+        ]
+      }]
+      """
+    try Data(legacyRecipe.utf8).write(to: fileURL)
+
+    let store = RecipeStore(fileURL: fileURL)
+
+    XCTAssertNil(store.errorMessage)
+    XCTAssertEqual(store.recipes.first?.name, "Legacy")
+    XCTAssertNil(store.recipes.first?.spacing)
+  }
 }

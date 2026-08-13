@@ -126,6 +126,8 @@ SWIFTLINT_VERSION="$(swiftlint version)"
 /usr/bin/plutil -convert json -o "$MANIFEST" "$MANIFEST_PLIST"
 /bin/rm "$MANIFEST_PLIST"
 
+"$ROOT_DIR/script/verify_release.sh" "$RELEASE_DIR"
+
 echo "Release ready: $FINAL_ZIP"
 echo "Checksum: $FINAL_ZIP.sha256"
 echo "Notarization submission: $NOTARY_ID"

@@ -37,6 +37,13 @@ The picker should include **Browser Fixture** and **Chat Fixture** as separate
 windows. It should exclude **Fixed Panel — should not appear**. The fixture is a
 separate development target and is never embedded in the release app or DMG.
 
+Before the manual checks, run `./script/run_acceptance_matrix.sh`. It uses the
+signed development app to exercise the two fixture windows through the real
+Accessibility API, including the frequent-suggestion flow, all two-window
+layout/ratio/gap combinations, slot-1 keyboard focus, and undo. Its
+machine-readable result is written to `.build/acceptance/report.json`. This
+debug-only gate does not write to the production recipe or suggestion stores.
+
 1. Select **Request Access** and enable the production **eaSplit** entry in
    System Settings → Privacy & Security → Accessibility.
 2. Return to eaSplit. Approval should be detected automatically; use
@@ -45,12 +52,22 @@ separate development target and is never embedded in the release app or DMG.
 4. Verify refresh, recent-window ordering, window selection, and slot numbering.
 5. Exercise columns and rows at every available ratio with a visible gap.
 6. Enable **Fill screen edge to edge** and verify zero screen-edge and center gap.
-7. Exercise three columns and focus-plus-stack with three windows.
-8. Verify a saved recipe, repeat last split, undo, and deletion.
-9. Assign and exercise each global shortcut, including after quitting and
-   reopening eaSplit.
-10. Enable and disable launch at login, then verify the approved state after a
+7. Leave **Bring split windows forward** enabled, cover both selected windows
+   with an unrelated window, and split. Verify both selected windows are visible
+   above the unrelated window and slot 1 receives keyboard focus. Then replace
+   slot 2 with a third application and split again; the old slot-2 application
+   must remain behind both newly selected windows.
+8. Disable **Bring split windows forward** and repeat. Verify geometry still
+   changes without eaSplit explicitly raising or focusing either window.
+9. Exercise three columns and focus-plus-stack with three windows.
+10. Verify a saved recipe, repeat last split, undo, and deletion.
+11. Assign and exercise each global shortcut, including after quitting and
+    reopening eaSplit.
+12. Enable and disable launch at login, then verify the approved state after a
     real logout/login cycle.
+13. While another app is active, open eaSplit from the menu bar and select
+    **Settings**. Verify the Settings window is active immediately, its controls
+    use the active appearance, and no second picker window opens.
 
 ## Edge matrix
 
