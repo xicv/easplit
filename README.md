@@ -70,8 +70,11 @@ script.
 
 ## Distribution status
 
-The repository includes a fail-closed Developer ID archive, signed disk-image,
-notarization, stapling, Gatekeeper, and checksum workflow. See
+The repository includes fail-closed local and GitHub-hosted Developer ID
+archive, disk-image signing, notarization, stapling, Gatekeeper, checksum, and
+artifact-verification workflows. The hosted workflow is manual, requires an
+exact `main` commit and protected-environment approval, and stops at an
+unpublished GitHub draft. See
 [`docs/RELEASE_CHECKLIST.md`](docs/RELEASE_CHECKLIST.md). It intentionally does
 not include placeholder licensing or automatic-update services; those require a
 real commercial provider, HTTPS download host, Sparkle appcast, and update key.
@@ -81,6 +84,12 @@ candidate commit with `EASPLIT_NOTARY_PROFILE=<profile>
 EASPLIT_RELEASE_LABEL=<version-label> ./script/release.sh`. The release directory
 contains the exact commit, tool versions, checksums, and Apple notarization IDs
 in `release-manifest.json`.
+
+After the one-time encrypted-secret setup, the safer hosted path is **Actions →
+Prepare eaSplit draft release → Run workflow**. The workflow cannot run on a
+schedule or source change, does not push a tag, and does not publish a release.
+The exact draft bytes still require clean-Mac acceptance and an intentional
+human publish action.
 
 The private-beta landing, install, privacy, support, terms, and download surface
 is in [`site/`](site/). The clean-Mac acceptance procedure is in

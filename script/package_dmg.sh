@@ -10,11 +10,21 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_BUNDLE="$1"
 OUTPUT_DMG="$2"
 NOTARY_PROFILE="${EASPLIT_NOTARY_PROFILE:-}"
+NOTARY_KEYCHAIN="${EASPLIT_NOTARY_KEYCHAIN:-}"
 SIGNING_IDENTITY="${EASPLIT_DEVELOPER_ID:-Developer ID Application: XI CAO (6UVB8NWW6F)}"
 
 if [[ -z "$NOTARY_PROFILE" ]]; then
   echo "Set EASPLIT_NOTARY_PROFILE to a notarytool keychain profile name." >&2
   exit 1
+fi
+
+NOTARY_ARGS=(--keychain-profile "$NOTARY_PROFILE")
+if [[ -n "$NOTARY_KEYCHAIN" ]]; then
+  if [[ "$NOTARY_KEYCHAIN" != /* || ! -f "$NOTARY_KEYCHAIN" ]]; then
+    echo "Expected an existing absolute notary keychain, found: $NOTARY_KEYCHAIN" >&2
+    exit 2
+  fi
+  NOTARY_ARGS+=(--keychain "$NOTARY_KEYCHAIN")
 fi
 
 if [[ "$APP_BUNDLE" != /* || "$APP_BUNDLE" != *.app || ! -d "$APP_BUNDLE" ]]; then
@@ -70,7 +80,7 @@ trap cleanup EXIT
 /usr/bin/codesign --verify --strict --verbose=2 "$OUTPUT_DMG"
 /usr/bin/hdiutil verify "$OUTPUT_DMG"
 /usr/bin/xcrun notarytool submit "$OUTPUT_DMG" \
-  --keychain-profile "$NOTARY_PROFILE" \
+  "${NOTARY_ARGS[@]}" \
   --wait \
   --output-format json >"$NOTARY_RESULT"
 
@@ -82,7 +92,7 @@ if [[ "$NOTARY_STATUS" != "Accepted" ]]; then
 fi
 
 /usr/bin/xcrun notarytool log "$NOTARY_ID" \
-  --keychain-profile "$NOTARY_PROFILE" \
+  "${NOTARY_ARGS[@]}" \
   "$NOTARY_LOG"
 /usr/bin/xcrun stapler staple "$OUTPUT_DMG"
 /usr/bin/xcrun stapler validate "$OUTPUT_DMG"

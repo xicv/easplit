@@ -3,11 +3,12 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT_PATH="$ROOT_DIR/eaSplit.xcodeproj"
-EXPORT_OPTIONS="$ROOT_DIR/script/ExportOptions.plist"
+EXPORT_OPTIONS="${EASPLIT_EXPORT_OPTIONS:-$ROOT_DIR/script/ExportOptions.plist}"
 NOTARY_PROFILE="${EASPLIT_NOTARY_PROFILE:-}"
+NOTARY_KEYCHAIN="${EASPLIT_NOTARY_KEYCHAIN:-}"
 RELEASE_LABEL="${EASPLIT_RELEASE_LABEL:-}"
 TIMESTAMP="$(/bin/date -u '+%Y%m%dT%H%M%SZ')"
-RELEASE_DIR="$ROOT_DIR/.build/releases/$TIMESTAMP"
+RELEASE_DIR="${EASPLIT_RELEASE_DIR:-$ROOT_DIR/.build/releases/$TIMESTAMP}"
 ARCHIVE_PATH="$RELEASE_DIR/eaSplit.xcarchive"
 EXPORT_DIR="$RELEASE_DIR/export"
 UPLOAD_ZIP="$RELEASE_DIR/eaSplit-notarization.zip"
@@ -21,6 +22,40 @@ if [[ -z "$NOTARY_PROFILE" ]]; then
   exit 1
 fi
 
+if [[ "$RELEASE_DIR" != /* || "$RELEASE_DIR" == "/" ]]; then
+  echo "EASPLIT_RELEASE_DIR must be a specific absolute path." >&2
+  exit 2
+fi
+if [[ "$EXPORT_OPTIONS" != /* || ! -f "$EXPORT_OPTIONS" ]]; then
+  echo "Expected an absolute export-options plist, found: $EXPORT_OPTIONS" >&2
+  exit 2
+fi
+
+NOTARY_ARGS=(--keychain-profile "$NOTARY_PROFILE")
+if [[ -n "$NOTARY_KEYCHAIN" ]]; then
+  if [[ "$NOTARY_KEYCHAIN" != /* || ! -f "$NOTARY_KEYCHAIN" ]]; then
+    echo "Expected an existing absolute notary keychain, found: $NOTARY_KEYCHAIN" >&2
+    exit 2
+  fi
+  NOTARY_ARGS+=(--keychain "$NOTARY_KEYCHAIN")
+fi
+
+ARCHIVE_SIGNING_ARGS=(-allowProvisioningUpdates)
+EXPORT_SIGNING_ARGS=(-allowProvisioningUpdates)
+if [[ "${EASPLIT_CI_SIGNING:-}" == "1" ]]; then
+  SIGNING_IDENTITY="${EASPLIT_DEVELOPER_ID:-}"
+  if [[ -z "$SIGNING_IDENTITY" ]]; then
+    echo "Set EASPLIT_DEVELOPER_ID when EASPLIT_CI_SIGNING=1." >&2
+    exit 1
+  fi
+  ARCHIVE_SIGNING_ARGS=(
+    CODE_SIGN_STYLE=Manual
+    CODE_SIGN_IDENTITY="$SIGNING_IDENTITY"
+    DEVELOPMENT_TEAM=6UVB8NWW6F
+  )
+  EXPORT_SIGNING_ARGS=()
+fi
+
 cd "$ROOT_DIR"
 if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
   echo "Release requires a clean Git working tree." >&2
@@ -28,6 +63,11 @@ if [[ -n "$(git status --porcelain --untracked-files=normal)" ]]; then
 fi
 
 SOURCE_COMMIT="$(git rev-parse --verify HEAD)"
+if [[ -n "$RELEASE_LABEL" ]]; then
+  /usr/bin/ruby "$ROOT_DIR/script/release_candidate_contract.rb" \
+    "$RELEASE_LABEL" \
+    "$SOURCE_COMMIT" >/dev/null
+fi
 EASPLIT_LINT_BASE="${EASPLIT_LINT_BASE:-HEAD^}" "$ROOT_DIR/script/quality.sh"
 
 if [[ -e "$RELEASE_DIR" ]]; then
@@ -44,7 +84,7 @@ xcodebuild \
   -configuration Release \
   -destination 'generic/platform=macOS' \
   -archivePath "$ARCHIVE_PATH" \
-  -allowProvisioningUpdates \
+  "${ARCHIVE_SIGNING_ARGS[@]}" \
   archive
 
 xcodebuild \
@@ -52,7 +92,7 @@ xcodebuild \
   -archivePath "$ARCHIVE_PATH" \
   -exportPath "$EXPORT_DIR" \
   -exportOptionsPlist "$EXPORT_OPTIONS" \
-  -allowProvisioningUpdates
+  "${EXPORT_SIGNING_ARGS[@]}"
 
 EXPORTED_APP="$EXPORT_DIR/eaSplit.app"
 if [[ ! -d "$EXPORTED_APP" ]]; then
@@ -62,7 +102,7 @@ fi
 
 /usr/bin/ditto -c -k --keepParent "$EXPORTED_APP" "$UPLOAD_ZIP"
 /usr/bin/xcrun notarytool submit "$UPLOAD_ZIP" \
-  --keychain-profile "$NOTARY_PROFILE" \
+  "${NOTARY_ARGS[@]}" \
   --wait \
   --output-format json >"$NOTARY_RESULT"
 
@@ -74,7 +114,7 @@ if [[ "$NOTARY_STATUS" != "Accepted" ]]; then
 fi
 
 /usr/bin/xcrun notarytool log "$NOTARY_ID" \
-  --keychain-profile "$NOTARY_PROFILE" \
+  "${NOTARY_ARGS[@]}" \
   "$NOTARY_LOG"
 /usr/bin/xcrun stapler staple "$EXPORTED_APP"
 

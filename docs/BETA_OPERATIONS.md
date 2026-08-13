@@ -38,6 +38,20 @@ Gatekeeper behavior on a clean Mac, Accessibility approval, multi-display or
 Spaces behavior, application-specific resizing, or sustained everyday use.
 Those remain the human gates in `docs/BETA_ACCEPTANCE.md`.
 
+## Preparing the next beta
+
+The manual **Prepare eaSplit draft release** workflow automates the signed,
+notarized, stapled, packaged, and verified candidate. It requires an exact
+`main` SHA, a successful hosted quality check, explicit confirmation, and
+approval for the protected `release-candidate` environment. Its final state is
+an unpublished prerelease draft; it cannot change the public website or current
+tester download by itself.
+
+Follow `docs/RELEASE_CHECKLIST.md` for one-time secret setup and each release.
+Only publish a draft after clean-Mac acceptance. After publishing, update the
+website to point at the new immutable versioned artifact and let the Pages
+deployment plus beta-health workflow prove public byte identity.
+
 ## How testers send feedback
 
 1. Open <https://xicv.github.io/easplit/support.html>.

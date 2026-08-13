@@ -4,3 +4,7 @@ DerivedData/
 xcuserdata/
 *.xcuserstate
 
+*.keychain
+*.keychain-db
+*.p12
+*.p8
