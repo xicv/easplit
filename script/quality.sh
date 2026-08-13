@@ -19,6 +19,7 @@ done
 cd "$ROOT_DIR"
 git diff --check
 "$ROOT_DIR/script/lint_changed.sh"
+/usr/bin/ruby "$ROOT_DIR/script/tests/beta_feedback_form_test.rb"
 "$ROOT_DIR/script/tests/beta_site_health_test.sh"
 
 /bin/cp "$PROJECT_PATH/project.pbxproj" "$PROJECT_SNAPSHOT"

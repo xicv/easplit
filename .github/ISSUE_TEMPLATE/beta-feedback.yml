@@ -117,10 +117,10 @@ body:
     attributes:
       label: Would a polished version be worth a one-time purchase?
       options:
-        - Yes
-        - Maybe
-        - No
-        - Prefer not to answer
+        - "Yes"
+        - "Maybe"
+        - "No"
+        - "Prefer not to answer"
     validations:
       required: true
 
