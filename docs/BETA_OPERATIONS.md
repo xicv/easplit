@@ -66,3 +66,24 @@ the repository owner's GitHub notification settings. For each report:
 
 Before inviting testers, submit one harmless test report, confirm it appears in
 the filtered inbox and notification stream, then close it.
+
+## Weekly beta report
+
+GitHub Actions generates a read-only beta-operations report every Monday at
+08:37 Australia/Adelaide time. Open:
+
+<https://github.com/xicv/easplit/actions/workflows/beta-feedback-report.yml>
+
+Choose the latest run and read its **Summary**. The report shows:
+
+- feedback opened and closed during the previous seven days;
+- the complete open feedback count;
+- reports with no replies and reports open longer than seven days;
+- stated weekly-use and one-time-purchase intent; and
+- the current public website and release-metadata health result.
+
+The report can also be generated immediately with **Run workflow**. It reads
+public issues carrying the `beta-feedback` label and never comments, closes,
+labels, reprioritizes, or otherwise modifies them. Issue titles are sanitized
+before being written to the Actions summary; arbitrary issue-body text is not
+copied into the report.

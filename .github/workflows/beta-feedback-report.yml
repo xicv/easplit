@@ -1,0 +1,62 @@
+name: eaSplit weekly beta report
+
+on:
+  schedule:
+    - cron: "37 8 * * 1"
+      timezone: "Australia/Adelaide"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+
+concurrency:
+  group: beta-feedback-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Test the report generator
+        run: ruby script/tests/beta_feedback_report_test.rb
+
+      - name: Summarize beta feedback
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api --paginate --slurp -X GET \
+            -H "X-GitHub-Api-Version: 2026-03-10" \
+            "repos/${GITHUB_REPOSITORY}/issues" \
+            -f state=all \
+            -f labels=beta-feedback \
+            -f per_page=100 \
+            >"$RUNNER_TEMP/beta-feedback-pages.json"
+
+          jq 'add // []' "$RUNNER_TEMP/beta-feedback-pages.json" \
+            | ruby script/beta_feedback_report.rb \
+            >>"$GITHUB_STEP_SUMMARY"
+
+      - name: Verify public beta health
+        env:
+          EASPLIT_BETA_VERIFY_MODE: metadata
+          EASPLIT_GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          if ./script/beta_site_health.sh; then
+            {
+              echo "## Public beta health"
+              echo
+              echo "Website, navigation, feedback path, and release metadata passed verification."
+            } >>"$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "## Public beta health"
+              echo
+              echo "Verification failed. Inspect this run before inviting more testers."
+            } >>"$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
